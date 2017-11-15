@@ -13,6 +13,8 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.fail;
 
+import javax.swing.JOptionPane;
+
 //import org.openqa.selenium.chrome.ChromeDriver;
 //import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 //import org.openqa.selenium.ie.InternetExplorerDriver;
@@ -38,6 +40,9 @@ public class Login51abrownCom {
     @Test
 //    public void main(String[] args)throws Exception {
     public void testLogin51abrownCom() throws Exception {
+        // input prompt
+        String prompt4pw = JOptionPane.showInputDialog(null, "Please enter password", "Password required", JOptionPane.INFORMATION_MESSAGE);
+        System.out.println(prompt4pw);
         WebDriverWait wait = new WebDriverWait(driver, 10);
         try {
             driver.get(baseUrl + "/com/en/home.html");
@@ -78,8 +83,8 @@ public class Login51abrownCom {
 //            String namevalue = "51abrown";
 //            username.sendKeys(namevalue);
             WebElement userpw = driver.findElement(By.name("pf.pass"));
-            js.executeScript("arguments[0].setAttribute('value', 'Phonakte#Wal')", userpw);
-            //driver.findElement(By.name("pf.pass")).sendKeys("Phonakte#Wal");
+            js.executeScript("arguments[0].setAttribute('value', '" +prompt4pw+"')", userpw);
+            //driver.findElement(By.name("pf.pass")).sendKeys("xxxx");
             //WebElement button1 = wait.until(optionWithValueDisplayed("23"));
             WebElement button1 = wait.until((ExpectedConditions.visibilityOfElementLocated(By.cssSelector("button.button.button-submit"))));
             button1.click();
@@ -191,11 +196,14 @@ public class Login51abrownCom {
                 System.out.println("Logout not possible, missing that element!");
             }
         }
-        catch (Exception e) {
+/*        catch (Exception e) {
             e.printStackTrace();
-        } finally {
+        }
+*/
+        
+        finally {
             // close the Browser
-            // driver.quit(); //done in @After
+            // driver.quit(); //do this in @After
         }
     }
 
