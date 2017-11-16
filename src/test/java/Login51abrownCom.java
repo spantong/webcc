@@ -27,6 +27,8 @@ public class Login51abrownCom {
     private static String baseUrl;
     private boolean acceptNextAlert = true;
     private static StringBuffer verificationErrors = new StringBuffer();
+    private static String p="AkwaB4so@1Phonakte#Wal0Unitron#456AdvancedBionics#007".substring(10,22);
+    private static String u="iSchB4vv@1k51aBrown++Unigtro#789Advancybikonics#101".substring(11,19);
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -41,8 +43,8 @@ public class Login51abrownCom {
 //    public void main(String[] args)throws Exception {
     public void testLogin51abrownCom() throws Exception {
         // input prompt
-        String prompt4pw = JOptionPane.showInputDialog(null, "Please enter password", "Password required", JOptionPane.INFORMATION_MESSAGE);
-        System.out.println(prompt4pw);
+        //String prompt4pw = JOptionPane.showInputDialog(null, "Please enter password", "Password required", JOptionPane.INFORMATION_MESSAGE);
+        //System.out.println(prompt4pw);
         WebDriverWait wait = new WebDriverWait(driver, 10);
         try {
             driver.get(baseUrl + "/com/en/home.html");
@@ -79,11 +81,11 @@ public class Login51abrownCom {
 //            username.click();
 //            driver.findElement(By.name("pf.username")).clear();
             //sendKeys not working in FF, use javascript instead of to enter username value
-            js.executeScript("arguments[0].setAttribute('value', '51abrown')", username);
+            js.executeScript("arguments[0].setAttribute('value', '"+u+"')", username);
 //            String namevalue = "51abrown";
 //            username.sendKeys(namevalue);
             WebElement userpw = driver.findElement(By.name("pf.pass"));
-            js.executeScript("arguments[0].setAttribute('value', '" +prompt4pw+"')", userpw);
+            js.executeScript("arguments[0].setAttribute('value', '"+p+"')", userpw);
             //driver.findElement(By.name("pf.pass")).sendKeys("xxxx");
             //WebElement button1 = wait.until(optionWithValueDisplayed("23"));
             WebElement button1 = wait.until((ExpectedConditions.visibilityOfElementLocated(By.cssSelector("button.button.button-submit"))));
@@ -200,7 +202,7 @@ public class Login51abrownCom {
             e.printStackTrace();
         }
 */
-        
+
         finally {
             // close the Browser
             // driver.quit(); //do this in @After
