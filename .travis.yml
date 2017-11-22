@@ -6,9 +6,6 @@ before_script:
 - sleep 3 #give xvfb some time to start
 script:
 - mvn test -Dtest=Login51abrownCom
-dist: trusty
-addons:
-  chrome: stable
 sudo: required
 dist: trusty
 before_install:
