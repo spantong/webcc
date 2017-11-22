@@ -1,9 +1,6 @@
 language: java
 jdk:
 - oraclejdk8
-before_script:
-- "sh -e /etc/init.d/xvfb start"
-- sleep 3 #give xvfb some time to start
 script:
 - mvn test -Dtest=Login51abrownCom
 sudo: required
