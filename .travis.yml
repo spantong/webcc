@@ -6,3 +6,10 @@ before_script:
 - sleep 3 #give xvfb some time to start
 script:
 - mvn test -Dtest=Login51abrownCom
+dist: trusty
+addons:
+  chrome: stable
+before_install:
+  - # start your web application and listen on `localhost`
+  - google-chrome-stable --headless --disable-gpu --remote-debugging-port=9222 http://localhost &
+  ⋮
