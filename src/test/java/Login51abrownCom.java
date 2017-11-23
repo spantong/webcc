@@ -35,7 +35,7 @@ public class Login51abrownCom {
     @BeforeClass
     public static void setUp() throws Exception {
         //System.setProperty("webdriver.ie.driver", "C:\\Software\\Drivers\\IE\\EDriverServer_Win32_3.6.0\\IEDriverServer.exe");
-
+        System.setProperty("webdriver.chrome.driver", "/usr/local/share/chromedriver");
         //start: for Travis ci
             final ChromeOptions chromeOptions = new ChromeOptions();
             chromeOptions.setBinary("/usr/local/share/chromedriver");
