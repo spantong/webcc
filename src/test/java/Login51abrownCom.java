@@ -34,11 +34,14 @@ public class Login51abrownCom {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        //System.setProperty("webdriver.ie.driver", "C:\\Software\\Drivers\\IE\\EDriverServer_Win32_3.6.0\\IEDriverServer.exe");
-        System.setProperty("webdriver.chrome.driver", "/usr/local/share/chromedriver");
-        //start: for Travis ci
+
+        String OS = System.getProperty("os.name");
+
+        if (OS=="Linux"){
+                System.setProperty("webdriver.chrome.driver", "/usr/local/share/chromedriver");
+            //start: for Travis ci
             final ChromeOptions chromeOptions = new ChromeOptions();
-            chromeOptions.setBinary("/usr/local/share/chromedriver");
+            //chromeOptions.setBinary("/usr/local/share/chromedriver");
             chromeOptions.addArguments("--headless");
             chromeOptions.addArguments("--disable-gpu");
             final DesiredCapabilities dc = new DesiredCapabilities();
@@ -46,9 +49,14 @@ public class Login51abrownCom {
             dc.setCapability(
                     ChromeOptions.CAPABILITY, chromeOptions
             );
-        // end: for Travis ci
+            // end: for Travis ci
 
-        driver = new ChromeDriver(dc);
+            driver = new ChromeDriver(dc);
+        } else{
+            //System.setProperty("webdriver.ie.driver", "C:\\Software\\Drivers\\IE\\EDriverServer_Win32_3.6.0\\IEDriverServer.exe");
+            driver = new ChromeDriver();
+        }
+
         baseUrl = "https://www.phonakpro.com/";
 
         //driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
