@@ -38,7 +38,7 @@ public class Login51abrownCom {
 
         //start: for Travis ci
             final ChromeOptions chromeOptions = new ChromeOptions();
-            chromeOptions.setBinary(System.getProperty("google.chrome"));
+            chromeOptions.setBinary("/usr/local/share/chromedriver");
             chromeOptions.addArguments("--headless");
             chromeOptions.addArguments("--disable-gpu");
             final DesiredCapabilities dc = new DesiredCapabilities();
@@ -48,7 +48,7 @@ public class Login51abrownCom {
             );
         // end: for Travis ci
 
-        driver = new ChromeDriver();
+        driver = new ChromeDriver(dc);
         baseUrl = "https://www.phonakpro.com/";
 
         //driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
