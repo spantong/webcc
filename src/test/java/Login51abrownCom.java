@@ -3,8 +3,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -33,6 +35,19 @@ public class Login51abrownCom {
     @BeforeClass
     public static void setUp() throws Exception {
         //System.setProperty("webdriver.ie.driver", "C:\\Software\\Drivers\\IE\\EDriverServer_Win32_3.6.0\\IEDriverServer.exe");
+
+        //start: for Travis ci
+            final ChromeOptions chromeOptions = new ChromeOptions();
+            chromeOptions.setBinary(System.getProperty("google.chrome"));
+            chromeOptions.addArguments("--headless");
+            chromeOptions.addArguments("--disable-gpu");
+            final DesiredCapabilities dc = new DesiredCapabilities();
+            dc.setJavascriptEnabled(true);
+            dc.setCapability(
+                    ChromeOptions.CAPABILITY, chromeOptions
+            );
+        // end: for Travis ci
+
         driver = new ChromeDriver();
         baseUrl = "https://www.phonakpro.com/";
 
