@@ -39,7 +39,7 @@ public class Login51abrownCom {
 
         if (OS=="Linux"){
                 System.setProperty("webdriver.chrome.driver", "/usr/local/share/chromedriver");
-            //start: for Travis ci
+            /*start: for Travis ci
             final ChromeOptions chromeOptions = new ChromeOptions();
             //chromeOptions.setBinary("/usr/local/share/chromedriver");
             chromeOptions.addArguments("--headless");
@@ -49,9 +49,10 @@ public class Login51abrownCom {
             dc.setCapability(
                     ChromeOptions.CAPABILITY, chromeOptions
             );
-            // end: for Travis ci
+            // end: for Travis ci */
 
-            driver = new ChromeDriver(dc);
+            //driver = new ChromeDriver(dc);
+            driver = new ChromeDriver();
         } else{
             //System.setProperty("webdriver.ie.driver", "C:\\Software\\Drivers\\IE\\EDriverServer_Win32_3.6.0\\IEDriverServer.exe");
             driver = new ChromeDriver();
