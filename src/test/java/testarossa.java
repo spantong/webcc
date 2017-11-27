@@ -20,7 +20,7 @@ public class testarossa {
         //driver = Driver.get();
         //driver.get();
         //System.setProperty("webdriver.edge.driver", "C:\\Software\\Drivers\\Edge\\MicrosoftWebDriver.exe");
-        driver = new ChromeDriver();
+        driver = new FirefoxDriver();
         System.out.println("Before class");
     }
 
