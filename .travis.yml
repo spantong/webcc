@@ -4,6 +4,14 @@ jdk:
   - oraclejdk8
 sudo: required
 #dist: trusty
+addons:
+  firefox: "47.0.1"
+jdk:
+  - oraclejdk8
+before_script:
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 3 # give xvfb some time to start
 #addons:
 #  chrome: stable
 #install: # Install ChromeDriver.
@@ -13,9 +21,6 @@ sudo: required
 #  - sudo mv -f ~/chromedriver /usr/local/share/
 #  - sudo chmod +x /usr/local/share/chromedriver
 #  - sudo ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver
-before_script:
-  - "sh -e /etc/init.d/xvfb start"
-  - sleep 3 #give xvfb some time to start
 script:
 #  - set -e
 #  - whereis google-chrome-stable
