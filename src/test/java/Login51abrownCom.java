@@ -55,7 +55,7 @@ public class Login51abrownCom {
             driver = new ChromeDriver();
         } else{
             //System.setProperty("webdriver.ie.driver", "C:\\Software\\Drivers\\IE\\EDriverServer_Win32_3.6.0\\IEDriverServer.exe");
-            driver = new ChromeDriver();
+            driver = new FirefoxDriver();
         }
 
         baseUrl = "https://www.phonakpro.com/";
