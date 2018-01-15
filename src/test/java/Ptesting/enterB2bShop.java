@@ -36,7 +36,7 @@ public class enterB2bShop {
 
     @Test
 //    public void main(String[] args)throws Exception {
-    public void testLogin51abrownCom() throws Exception {
+    public void testTestLogin51abrownCom() throws Exception {
 
         WebDriverWait wait = new WebDriverWait(driver, 10);
         shopLoginPage loginPage = new shopLoginPage(driver);
