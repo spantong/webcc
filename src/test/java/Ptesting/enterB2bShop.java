@@ -31,7 +31,8 @@ public class enterB2bShop {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        driver = new FirefoxDriver();
+        //driver = new FirefoxDriver();
+        driver = new ChromeDriver();
     }
 
     @Test
@@ -44,8 +45,8 @@ public class enterB2bShop {
             // Start on b2b landing/home page
             loginPage.loadB2bPage(driver);
             loginPage.clickChange(driver);
-//          WebElement gotoo = wait.until((ExpectedConditions.elementToBeClickable(By.cssSelector("a[href*='europe/fr_fr']")))); // France country selection
-          WebElement gotoo = wait.until((ExpectedConditions.elementToBeClickable(By.cssSelector("a[href*='/north-america/us_en']")))); // USA
+          WebElement gotoo = wait.until((ExpectedConditions.elementToBeClickable(By.cssSelector("a[href*='europe/fr_fr']")))); // France country selection
+//          WebElement gotoo = wait.until((ExpectedConditions.elementToBeClickable(By.cssSelector("a[href*='/north-america/us_en']")))); // USA
 //          WebElement gotoo = wait.until((ExpectedConditions.elementToBeClickable(By.cssSelector("a[href*='/europe/uk_en']")))); // UK
             gotoo.click();
             wait.until((ExpectedConditions.urlContains("/home")));

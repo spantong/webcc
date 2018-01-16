@@ -56,6 +56,7 @@ public class Login51abrownCom {
         } else{
             //System.setProperty("webdriver.ie.driver", "C:\\Software\\Drivers\\IE\\EDriverServer_Win32_3.6.0\\IEDriverServer.exe");
             driver = new FirefoxDriver();
+            //driver = new ChromeDriver();
         }
 
         baseUrl = "https://www.phonakpro.com/";
@@ -121,7 +122,7 @@ public class Login51abrownCom {
             WebElement profile;
             //driver.findElement(By.xpath("//a[contains(@href, 'my-profile')]"));
             //profile = driver.findElement(By.cssSelector("a[href*='my-profile']"));
-            profile = wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("a[href*='my-profile']"))));
+            profile = wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("a[href*='/account']"))));
             //get the exact link value
             String anchor = profile.getAttribute("href");
             //System.out.println(anchor);
