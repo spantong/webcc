@@ -28,6 +28,13 @@ public class enterB2bShop {
 //    private static String baseUrl;
     private boolean acceptNextAlert = true;
     private static StringBuffer verificationErrors = new StringBuffer();
+    private static String fr = "a[href*='europe/fr_fr']"; // link of France country selection
+    private static String usa = "a[href*='/north-america/us_en']"; // link of usa country selection
+    private static String uk = "a[href*='/europe/uk_en']"; // link of uk country selection
+
+//    WebElement gotoo = wait.until((ExpectedConditions.elementToBeClickable(By.cssSelector("a[href*='europe/fr_fr']")))); // France country selection
+//          WebElement gotoo = wait.until((ExpectedConditions.elementToBeClickable(By.cssSelector("a[href*='/north-america/us_en']")))); // USA
+//          WebElement gotoo = wait.until((ExpectedConditions.elementToBeClickable(By.cssSelector("a[href*='/europe/uk_en']")))); // UK
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -45,10 +52,26 @@ public class enterB2bShop {
             // Start on b2b landing/home page
             loginPage.loadB2bPage(driver);
             loginPage.clickChange(driver);
-          WebElement gotoo = wait.until((ExpectedConditions.elementToBeClickable(By.cssSelector("a[href*='europe/fr_fr']")))); // France country selection
-//          WebElement gotoo = wait.until((ExpectedConditions.elementToBeClickable(By.cssSelector("a[href*='/north-america/us_en']")))); // USA
-//          WebElement gotoo = wait.until((ExpectedConditions.elementToBeClickable(By.cssSelector("a[href*='/europe/uk_en']")))); // UK
+
+            // Get command line input if started that way or via contineous integration (CI)
+            String country=usa; // set up default country
+            System.out.println("Default country selection = " +country);
+            String c_param = System.getProperty("country.cli");
+
+            if(c_param != null){ // check if there is a value entered with cmd line
+                if(c_param.contentEquals("fr"))
+                    country = fr;
+                if(c_param.contentEquals("us"))
+                    country = usa;
+                if(c_param.contentEquals("uk"))
+                    country = uk;
+
+                System.out.println("country.cli = " +country);
+            }
+
+            WebElement gotoo = wait.until((ExpectedConditions.elementToBeClickable(By.cssSelector(country)))); // wait for specific element country selection
             gotoo.click();
+
             wait.until((ExpectedConditions.urlContains("/home")));
             loginPage.clickCountryLogin(driver);
             wait.until((ExpectedConditions.elementToBeClickable(By.name("pf.username"))));

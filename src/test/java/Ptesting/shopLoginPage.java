@@ -19,8 +19,8 @@ public class shopLoginPage {
     private static String p="AkwaB4so@1Phonakte#Wal0Unitron#456AdvancedBionics#007".substring(10,22);
 //  private static String p="AkwaB4so@1Phonakte#Wal0Unitron#456AdvancedBionics#007".substring(10,22);
 //  private static String p="AkwaB4so@1Phonakte#1230Unitron#456AdvancedBionics#007".substring(10,22);
-//    private static String u="iSchB4vv@1k51aBrown++Unigtro#789Advancybikonics#101".substring(11,19);
-    private static String u="iSchB4vv@1k21nsarkozy++Unigtro#789Advancybikonics#101".substring(11,21);
+    private static String u="iSchB4vv@1k51aBrown++Unigtro#789Advancybikonics#101".substring(11,19);
+//  private static String u="iSchB4vv@1k21nsarkozy++Unigtro#789Advancybikonics#101".substring(11,21);
 //  private static String u="iSchB4vv@1k25ewindsor++Unigtro#789Advancybikonics#101".substring(11,21);
 //  JavascriptExecutor js = (JavascriptExecutor) driver;
 
@@ -54,18 +54,34 @@ public class shopLoginPage {
 
     public void enterUsername(WebDriver driver) {
         userName.clear();
+        String u1=u; // copy u
+        System.out.println("username = " +u1);
+        String u_param = System.getProperty("userName.cli");
+
+        if(u_param != null){ // check if there is a value entered with cmd line
+            u1 = u_param; // set username ex cmd parameter
+            System.out.println("userName.cli = " +u1);
+        }
         WebElement username = driver.findElement(By.name("pf.username"));
         JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("arguments[0].setAttribute('value', '"+u+"')", username);
+        js.executeScript("arguments[0].setAttribute('value', '"+u1+"')", username);
         //userName.sendKeys();
     }
 
     public void enterPassword(WebDriver driver) {
         //password.sendKeys("testpassword");
         password.clear();
+        String p1=p; // copy u
+        System.out.println("userPw = " +p1);
+        String p_param = System.getProperty("userPw.cli");
+
+        if(p_param != null){ // check if there is a value entered with cmd line
+            p1 = p_param; // set username ex cmd parameter
+            System.out.println("userPw.cli = " +p1);
+        }
         WebElement userpw = driver.findElement(By.name("pf.pass"));
         JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("arguments[0].setAttribute('value', '"+p+"')", userpw);
+        js.executeScript("arguments[0].setAttribute('value', '"+p1+"')", userpw);
     }
 
     public void clickLoginButton() {

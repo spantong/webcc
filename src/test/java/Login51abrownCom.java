@@ -1,3 +1,4 @@
+import org.apache.commons.lang3.ObjectUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -106,7 +107,15 @@ public class Login51abrownCom {
 //            username.click();
 //            driver.findElement(By.name("pf.username")).clear();
             //sendKeys not working in FF, use javascript instead of to enter username value
-            js.executeScript("arguments[0].setAttribute('value', '"+u+"')", username);
+            String u1=u; // copy u
+            String u_param = ""; // init var
+            u_param = System.getProperty("userName.cli");
+
+            if(u_param != null){ // check if there is a value entered with cmd call
+                u1 = u_param; // set username ex cmd parameter
+                System.out.println("userName.cli = " +u1);
+            }
+            js.executeScript("arguments[0].setAttribute('value', '"+u1+"')", username);
 //            String namevalue = "51abrown";
 //            username.sendKeys(namevalue);
             WebElement userpw = driver.findElement(By.name("pf.pass"));
