@@ -47,7 +47,15 @@ public class shopLoginPage {
     }
 
     public void loadB2bPage(WebDriver driver) {
+        String b1=baseUrl; // copy
+        //System.out.println("baseUrl = " +b1);
+        String b_param = System.getProperty("baseUrl.cli");
 
+        if(b_param != null){ // check if there is a value entered with cmd line
+            baseUrl = b_param; // set baseurl ex cmd parameter
+            //System.out.println("baseUrl.cli = " +baseUrl);  // output actual value
+        }
+        // System.out.println("baseurl: " +baseUrl);
         driver.get(baseUrl + "/com/en/home.html");
         Assert.assertEquals(driver.getCurrentUrl(), baseUrl + "com/en/home.html");
     }
@@ -55,30 +63,27 @@ public class shopLoginPage {
     public void enterUsername(WebDriver driver) {
         userName.clear();
         String u1=u; // copy u
-        System.out.println("username = " +u1);
         String u_param = System.getProperty("userName.cli");
 
         if(u_param != null){ // check if there is a value entered with cmd line
             u1 = u_param; // set username ex cmd parameter
-            System.out.println("userName.cli = " +u1);
         }
+        String un3m = u1.substring(0,u1.length()-3) + "***";
+        System.out.println("username: " +un3m);
         WebElement username = driver.findElement(By.name("pf.username"));
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("arguments[0].setAttribute('value', '"+u1+"')", username);
-        //userName.sendKeys();
     }
 
     public void enterPassword(WebDriver driver) {
-        //password.sendKeys("testpassword");
         password.clear();
         String p1=p; // copy u
-        System.out.println("userPw = " +p1);
         String p_param = System.getProperty("userPw.cli");
 
         if(p_param != null){ // check if there is a value entered with cmd line
             p1 = p_param; // set username ex cmd parameter
-            System.out.println("userPw.cli = " +p1);
         }
+        System.out.println("password: ******");
         WebElement userpw = driver.findElement(By.name("pf.pass"));
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("arguments[0].setAttribute('value', '"+p1+"')", userpw);

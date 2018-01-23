@@ -1,3 +1,5 @@
+package Qtesting;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -79,9 +81,14 @@ public class phonakQstesting {
             js.executeScript("arguments[0].setAttribute('value', 'Phonakte#Wal')", userpw);
             //driver.findElement(By.name("pf.pass")).sendKeys("Phonakte#Wal");
             //WebElement button1 = wait.until(optionWithValueDisplayed("23"));
+
             WebElement button1 = wait.until((ExpectedConditions.visibilityOfElementLocated(By.cssSelector("button.button.button-submit"))));
             button1.click();
-
+/*            String checkTitle= driver.getTitle();
+            if (checkTitle.contains("error") || checkTitle.contains("Error")){
+                button1.click(); //Error
+           }
+*/
             //       driver.findElement(By.cssSelector("button.button.button-submit")).click();
 
             //driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
@@ -189,9 +196,10 @@ public class phonakQstesting {
                 System.out.println("Logout not possible, missing that element!");
             }
         }
-        catch (Exception e) {
-            e.printStackTrace();
-        } finally {
+//        catch (Exception e) {
+//            e.printStackTrace();
+//        }
+        finally {
             // close the Browser
             // driver.quit(); //done in @After
         }

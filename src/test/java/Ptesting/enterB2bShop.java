@@ -12,6 +12,7 @@ import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.net.URL;
 import java.util.List;
 
 import static org.junit.Assert.fail;
@@ -32,9 +33,6 @@ public class enterB2bShop {
     private static String usa = "a[href*='/north-america/us_en']"; // link of usa country selection
     private static String uk = "a[href*='/europe/uk_en']"; // link of uk country selection
 
-//    WebElement gotoo = wait.until((ExpectedConditions.elementToBeClickable(By.cssSelector("a[href*='europe/fr_fr']")))); // France country selection
-//          WebElement gotoo = wait.until((ExpectedConditions.elementToBeClickable(By.cssSelector("a[href*='/north-america/us_en']")))); // USA
-//          WebElement gotoo = wait.until((ExpectedConditions.elementToBeClickable(By.cssSelector("a[href*='/europe/uk_en']")))); // UK
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -55,10 +53,11 @@ public class enterB2bShop {
 
             // Get command line input if started that way or via contineous integration (CI)
             String country=usa; // set up default country
-            System.out.println("Default country selection = " +country);
+            //System.out.println("Default country selection = " +country);
             String c_param = System.getProperty("country.cli");
 
             if(c_param != null){ // check if there is a value entered with cmd line
+                System.out.println("country = " +c_param);
                 if(c_param.contentEquals("fr"))
                     country = fr;
                 if(c_param.contentEquals("us"))
@@ -66,11 +65,44 @@ public class enterB2bShop {
                 if(c_param.contentEquals("uk"))
                     country = uk;
 
-                System.out.println("country.cli = " +country);
+                //System.out.println("country.cli = " +country);
             }
 
             WebElement gotoo = wait.until((ExpectedConditions.elementToBeClickable(By.cssSelector(country)))); // wait for specific element country selection
-            gotoo.click();
+            String gotoo_anchor = gotoo.getAttribute("href"); //get the url of the link
+            System.out.println(gotoo_anchor);  // output on console line
+            gotoo.click();  // result will be according AEM setting
+
+            // Check in case we are testing on other system then P, that we are on that environment after click on country selection which is static to go to P most of the time.
+            // Get command line input if started that way or via contineous integration (CI)
+            String b_param = System.getProperty("baseUrl.cli");
+            String baseUrl;
+            if(b_param != null){ // check if there is a value entered with cmd line
+                baseUrl = b_param; // set baseurl ex cmd parameter
+                //System.out.println("baseUrl.cli = " +baseUrl);  // output actual value
+                String c_url = driver.getCurrentUrl(); // get actual url
+                if(!c_url.contains(baseUrl)){ // not on intented test system environment
+                    System.out.println("You are on " +c_url+ "and NOT on " +baseUrl );  // output where you are and where it should be
+                    // manipulate url by using baseUrl
+                    // replace starting part with the baseUrl value
+                    URL aURL = new URL(c_url); // using url class splitting
+                    /*
+                    System.out.println("protocol = " + aURL.getProtocol());
+                    System.out.println("authority = " + aURL.getAuthority());
+                    System.out.println("host = " + aURL.getHost());
+                    System.out.println("port = " + aURL.getPort());
+                    System.out.println("path = " + aURL.getPath());
+                    System.out.println("query = " + aURL.getQuery());
+                    System.out.println("filename = " + aURL.getFile());
+                    System.out.println("ref = " + aURL.getRef());
+                    baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
+                    String xxx=baseUrl+aURL.getPath();
+                    System.out.println("xxx = " + xxx);
+                    */
+                    driver.get(baseUrl + aURL.getPath());  // change test environment
+
+                }
+            } // end test system switch
 
             wait.until((ExpectedConditions.urlContains("/home")));
             loginPage.clickCountryLogin(driver);
@@ -100,31 +132,6 @@ public class enterB2bShop {
             // Switch to shop/eservices page
             WebElement logout = wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("a[href*='/saml/logout']")))); // check page loaded and logout menu is there
 
-            /* Exclude these lines because after refresh issue was fixed
-            String url = driver.getCurrentUrl();
-            if(!url.contains("/phonakus")) {
-                driver.get("https://q-shop.phonakpro.com/phonakus/en/USD/");
-            }
-            else {
-                List<WebElement> logoutBtn = driver.findElements(By.cssSelector("a[href='/system/sling/logout.html']"));
-                if (!logoutBtn.isEmpty()) {
-                    WebElement logoutnBtnElement = logoutBtn.get(0);
-                    //                boolean viewable = logoutnBtnElement.isDisplayed(); //hidden, it's only visible with mouseover
-                    if (logoutnBtnElement.isDisplayed()) {
-                        //System.out.println("Login is displayed");
-                        logoutnBtnElement.click();
-                    } else {
-                        System.out.println("Login is NOT displayed");
-                        //JavascriptExecutor js = (JavascriptExecutor) driver;
-                        JavascriptExecutor js = (JavascriptExecutor) driver;
-                        js.executeScript("arguments[0].click();", logoutnBtnElement);
-                    }
-
-                }
-                //	End no redirect to USA store
-            }
-            */ // End of issue
-
             // start of my-account drop down menu check/processing
             WebElement myaccount_menubar = driver.findElement(By.cssSelector("div[class='account-name']"));
 
@@ -140,7 +147,7 @@ public class enterB2bShop {
                 anchor = child.getAttribute("href"); //get the url of the page
                 urlitem = driver.getCurrentUrl(); //get actual page url to compare
                 if (!anchor.equals(urlitem)){ // only change if it's not the the same (landingpage)
-                    if(!anchor.contains("user-management")){ // skip user-management due to long listing
+                    if(!anchor.contains("user-management") && !anchor.contains("order-history") && !anchor.contains("documenthistory")){ // skip user-management order- and documenthistory due to long processing
                         driver.get(anchor);  // change to that page (clicking somehow not working here)
                     }
                     else{
@@ -153,74 +160,41 @@ public class enterB2bShop {
                     System.out.println("This page is displayed: " + anchor);
                 }
                 else{
-                    System.out.println("ATTN: Wrong page " + urlitem + ", should show this page " + anchor ); // not the wanted page appears!
+                    System.out.println("ATTN: Wrong page " + urlitem + ", should show this page " + anchor ); // output warning that not the same page is showing as in the link!
                 }
-                // set these two vars again due ref is somehow lost!
+                // reset for the loop these two vars again due reference is somehow lost!
                 myaccount_menubar = driver.findElement(By.cssSelector("div[class='account-name']"));
                 myaccount_links = myaccount_menubar.findElements(By.tagName("li"));
             }
-            // end of my-account drop down check/processing
-
-            /* // start hero menu-bar
-            WebElement menubar = driver.findElement(By.cssSelector("div[class='menu-bar']"));
-
-            List<WebElement> mblink = menubar.findElements(By.tagName("li")); //get all avail links
-            System.out.println(mblink);
-            WebElement item;
-            String href;
-            String urlitem;
-            WebElement child;
-            for (int i=0;i < mblink.size(); i++){
-                item = mblink.get(i); //get each link and click on it to change to page
-                child = item.findElement(By.tagName("a")); //get anchor
-                href = child.getAttribute("href"); //get the url of the page
-                child.click(); // go to that page
-                urlitem = driver.getCurrentUrl(); //get actual page url to compare
-                if (href.equals(urlitem)){
-                   System.out.println("This page is displayed: " + href);
-                }
-                // set these two vars again due ref is somehow lost!
-                menubar = driver.findElement(By.cssSelector("div[class='menu-bar']"));
-                mblink = menubar.findElements(By.tagName("li"));
-            }
-            */ // end hero menu-bar
 
             List<WebElement> logoutBtn = driver.findElements(By.id("id_accountmenu_logout_link"));
             if (!logoutBtn.isEmpty()) {
                 WebElement logoutBtnElement = logoutBtn.get(0);
                 anchor = logoutBtnElement.getAttribute("href");
                 System.out.println(anchor); // console output logout link
-                /* no logout ex shop switch to b2b portal and do logout there
-                // use javascript to click on invisible element (visible only if mouse moved over it)
-                if (logoutBtnElement.isDisplayed()) {
-                    System.out.println("Logout is displayed");
-                    logoutBtnElement.click();
-                } else {
-                    System.out.println("Logout is NOT displayed");
-                    JavascriptExecutor js = (JavascriptExecutor) driver;
-                    js.executeScript("arguments[0].click();", logoutBtnElement);
-                }
-                */ // no logout ex shop
             }
             else{
                 System.out.println("Logout not possible, missing that element!");
             }
+            // end of my-account drop down check/processing
 
             // start verify shop items
             boolean shoplink = isElementPresent(By.cssSelector("li[class='homenav-li'] a[class='homenav-aa']"));
             if(shoplink) {  // shop link is available
-                String actualText = driver.findElement(By.cssSelector("li[class='homenav-li'] a[class='homenav-aa']")).getText();
-                System.out.println("Shop link name: " +actualText);
-                WebElement store = driver.findElement(By.cssSelector("li[class='homenav-li'] a[class='homenav-aa']")); // Store link
-                store.click(); // enter the shop
-
+                String actualText = driver.findElement(By.cssSelector("li[class='homenav-li'] a[class='homenav-aa']")).getText(); // get the label text
+                System.out.println("Shop link name: " +actualText); // output to show language specific text
+                WebElement store = driver.findElement(By.cssSelector("li[class='homenav-li'] a[class='homenav-aa']")); // get the Store link
+                String shop_anchor = store.getAttribute("href");  // get and save the exact url
+                store.click(); // enter the shop, switch from eservices to estore
                 wait.until((ExpectedConditions.urlContains("shop.phonakpro.com")));
                 urlitem = driver.getCurrentUrl(); //get actual page url to compare
-                if (store.equals(urlitem)){
-                    estoreMainPage estorePage = new estoreMainPage(driver);
-                    WebElement searchy = driver.findElement(By.cssSelector("div[class='search-bar left']"));
-                    JavascriptExecutor js = (JavascriptExecutor) driver;
-                    js.executeScript("arguments[0].setAttribute('value', 'blabla')", searchy);
+                if (shop_anchor.equals(urlitem)){  //current main shop page is same as in the link
+                    estoreMainPage estorePage = new estoreMainPage(driver); // instanciate shop page object
+                    WebElement searchy = driver.findElement(By.cssSelector("div[class='search-bar left']"));  // get element shop search box
+                    List<WebElement> searchInput = searchy.findElements(By.tagName("input"));
+                    WebElement inputElement = searchInput.get(0); // get the input element
+                    JavascriptExecutor js = (JavascriptExecutor) driver;  // using javascript
+                    js.executeScript("arguments[0].setAttribute('value', 'blabla')", inputElement); // input something in the search field
 
                     Assert.assertTrue(isElementPresent(driver, By.cssSelector("div[class='search-bar left']"))); // check search bar is present
                     estorePage.inputSearchBar(driver);
