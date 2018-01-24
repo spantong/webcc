@@ -8,7 +8,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
+import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -36,12 +39,28 @@ public class enterB2bShop {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        //driver = new FirefoxDriver();
-        driver = new ChromeDriver();
+        String br_param = System.getProperty("browser.cli");
+
+        if(br_param != null){ // check if there is a value entered with cmd line
+            System.out.println("Browser = " +br_param);
+            if(br_param.contentEquals("firefox"))
+                driver = new FirefoxDriver();
+            if(br_param.contentEquals("chrome"))
+                driver = new ChromeDriver(); // default
+            if(br_param.contentEquals("ie"))
+                driver = new InternetExplorerDriver();
+            if(br_param.contentEquals("edge"))
+                driver = new EdgeDriver();
+            if(br_param.contentEquals("opera"))
+                driver = new OperaDriver();
+        }
+        else{
+            driver = new ChromeDriver(); // default
+        }
     }
 
     @Test
-//    public void main(String[] args)throws Exception {
+//  public void main(String[] args)throws Exception {
     public void testTestLogin51abrownCom() throws Exception {
 
         WebDriverWait wait = new WebDriverWait(driver, 10);
@@ -82,7 +101,7 @@ public class enterB2bShop {
                 //System.out.println("baseUrl.cli = " +baseUrl);  // output actual value
                 String c_url = driver.getCurrentUrl(); // get actual url
                 if(!c_url.contains(baseUrl)){ // not on intented test system environment
-                    System.out.println("You are on " +c_url+ "and NOT on " +baseUrl );  // output where you are and where it should be
+                    System.out.println("You are on " +c_url+ " and NOT on " +baseUrl );  // output where you are and where it should be
                     // manipulate url by using baseUrl
                     // replace starting part with the baseUrl value
                     URL aURL = new URL(c_url); // using url class splitting

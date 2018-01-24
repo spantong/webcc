@@ -17,12 +17,7 @@ public class shopLoginPage {
     private static WebDriver driver;
     private static String baseUrl = "https://www.phonakpro.com/";
     private static String p="AkwaB4so@1Phonakte#Wal0Unitron#456AdvancedBionics#007".substring(10,22);
-//  private static String p="AkwaB4so@1Phonakte#Wal0Unitron#456AdvancedBionics#007".substring(10,22);
-//  private static String p="AkwaB4so@1Phonakte#1230Unitron#456AdvancedBionics#007".substring(10,22);
     private static String u="iSchB4vv@1k51aBrown++Unigtro#789Advancybikonics#101".substring(11,19);
-//  private static String u="iSchB4vv@1k21nsarkozy++Unigtro#789Advancybikonics#101".substring(11,21);
-//  private static String u="iSchB4vv@1k25ewindsor++Unigtro#789Advancybikonics#101".substring(11,21);
-//  JavascriptExecutor js = (JavascriptExecutor) driver;
 
     @FindBy(name="pf.username")
     private WebElement userName;
