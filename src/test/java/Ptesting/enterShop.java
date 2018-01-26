@@ -10,7 +10,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.openqa.selenium.opera.OperaDriver;
+//import org.openqa.selenium.opera.OperaDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -76,8 +76,8 @@ public class enterShop {
                 driver = new InternetExplorerDriver();
             if(br_param.contentEquals("edge"))
                 driver = new EdgeDriver();
-            if(br_param.contentEquals("opera"))
-                driver = new OperaDriver();
+//            if(br_param.contentEquals("opera"))
+//                driver = new OperaDriver();
         }
         else{
             driver = new ChromeDriver(); // default
