@@ -16,13 +16,11 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.net.URL;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.Properties;
 
 import static org.junit.Assert.fail;
-
-//import org.openqa.selenium.chrome.ChromeDriver;
-//import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-//import org.openqa.selenium.ie.InternetExplorerDriver;
 
 /**
  * Created by 11spantong on 19.10.2017.
@@ -35,10 +33,38 @@ public class enterB2bShop {
     private static String fr = "a[href*='europe/fr_fr']"; // link of France country selection
     private static String usa = "a[href*='/north-america/us_en']"; // link of usa country selection
     private static String uk = "a[href*='/europe/uk_en']"; // link of uk country selection
+    private static String ca = "a[href*='/north-america/ca_en']"; // link of ca en country selection
+
 
 
     @BeforeClass
     public static void setUp() throws Exception {
+
+/*      Properties p = System.getProperties();
+        Enumeration keys = p.keys();
+        while (keys.hasMoreElements()) {
+            String key = (String)keys.nextElement();
+            String value = (String)p.get(key);
+            System.out.println(key + ": " + value);
+        }
+
+        Properties props = new Properties();
+        props.setProperty("1", "One");
+        props.setProperty("2", "Two");
+        props.setProperty("3", "Three");
+        props.setProperty("4", "Four");
+        props.setProperty("5", "Five");
+
+        // Iterating properties using Enumeration
+
+        @SuppressWarnings("unchecked")
+        Enumeration<String> enums = (Enumeration<String>) props.propertyNames();
+        while (enums.hasMoreElements()) {
+          String key = enums.nextElement();
+          String value = props.getProperty(key);
+          System.out.println(key + " : " + value);
+        }
+//*/
         String br_param = System.getProperty("browser.cli");
 
         if(br_param != null){ // check if there is a value entered with cmd line
@@ -66,7 +92,8 @@ public class enterB2bShop {
         WebDriverWait wait = new WebDriverWait(driver, 10);
         shopLoginPage loginPage = new shopLoginPage(driver);
         try {
-            // Start on b2b landing/home page
+            String b_param = System.getProperty("baseUrl.cli"); // get start url
+            String baseUrl = b_param; // save baseurl ex cmd parameter
             loginPage.loadB2bPage(driver);
             loginPage.clickChange(driver);
 
@@ -83,7 +110,8 @@ public class enterB2bShop {
                     country = usa;
                 if(c_param.contentEquals("uk"))
                     country = uk;
-
+                if(c_param.contentEquals("ca"))
+                    country = ca;
                 //System.out.println("country.cli = " +country);
             }
 
@@ -94,10 +122,9 @@ public class enterB2bShop {
 
             // Check in case we are testing on other system then P, that we are on that environment after click on country selection which is static to go to P most of the time.
             // Get command line input if started that way or via contineous integration (CI)
-            String b_param = System.getProperty("baseUrl.cli");
-            String baseUrl;
+            // String b_param = System.getProperty("baseUrl.cli");
+
             if(b_param != null){ // check if there is a value entered with cmd line
-                baseUrl = b_param; // set baseurl ex cmd parameter
                 //System.out.println("baseUrl.cli = " +baseUrl);  // output actual value
                 String c_url = driver.getCurrentUrl(); // get actual url
                 if(!c_url.contains(baseUrl)){ // not on intented test system environment
@@ -125,6 +152,7 @@ public class enterB2bShop {
 
             wait.until((ExpectedConditions.urlContains("/home")));
             loginPage.clickCountryLogin(driver);
+
             wait.until((ExpectedConditions.elementToBeClickable(By.name("pf.username"))));
             loginPage.enterUsername(driver);
             loginPage.enterPassword(driver);
@@ -166,7 +194,7 @@ public class enterB2bShop {
                 anchor = child.getAttribute("href"); //get the url of the page
                 urlitem = driver.getCurrentUrl(); //get actual page url to compare
                 if (!anchor.equals(urlitem)){ // only change if it's not the the same (landingpage)
-                    if(!anchor.contains("user-management") && !anchor.contains("order-history") && !anchor.contains("documenthistory")){ // skip user-management order- and documenthistory due to long processing
+                    if(!anchor.contains("user-management") && !anchor.contains("order-history") && !anchor.contains("documenthistory") && !anchor.contains("salesforce")){ // skip user-management order- and documenthistory due to long processing
                         driver.get(anchor);  // change to that page (clicking somehow not working here)
                     }
                     else{
