@@ -43,6 +43,8 @@ public class shopLoginPage {
 
     public void loadB2bPage(WebDriver driver) {
         String b1=baseUrl; // copy
+        baseUrl = "xxx";
+        baseUrl=b1;
         //System.out.println("baseUrl = " +b1);
         String b_param = System.getProperty("baseUrl.cli");
 
