@@ -1,8 +1,6 @@
 package Ptesting;
 //import com.sun.istack.internal.localization.NullLocalizable;
-import org.apache.commons.lang3.ObjectUtils;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openqa.selenium.*;
@@ -14,17 +12,14 @@ import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.net.URL;
-import java.util.Enumeration;
 import java.util.List;
-import java.util.Properties;
 
 import static org.junit.Assert.fail;
 
 /**
  * Created by 11spantong on 19.10.2017.
  */
-public class enterShop {
+public class pEnterShop {
     private static WebDriver driver;
     //    private static String baseUrl;
     private boolean acceptNextAlert = true;
@@ -89,7 +84,7 @@ public class enterShop {
     public void testEnterShop() throws Exception {
 
         WebDriverWait wait = new WebDriverWait(driver, 10);
-        shopLoginPage loginPage = new shopLoginPage(driver);
+        pShopLoginPage loginPage = new pShopLoginPage(driver);
         try {
             String b_param = System.getProperty("baseUrl.cli"); // get start url
             String baseUrl = b_param; // save baseurl ex cmd parameter
@@ -148,7 +143,7 @@ public class enterShop {
 
             // start verify shop items
             //urlitem = driver.getCurrentUrl(); //get actual page url to compare
-//            estoreMainPage estorePage = new estoreMainPage(driver); // instanciate shop page object
+//            pEstoreMainPage estorePage = new pEstoreMainPage(driver); // instanciate shop page object
             WebElement searchy = driver.findElement(By.cssSelector("div[class='search-bar left']"));  // get element shop search box
             List<WebElement> searchInput = searchy.findElements(By.tagName("input"));
             WebElement inputElement = searchInput.get(0); // get the input element

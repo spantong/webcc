@@ -19,7 +19,7 @@ import static org.junit.Assert.fail;
 /**
  * Created by 11spantong on 02.11.2017.
  */
-public class phonakQstesting {
+public class qPhonakQstesting {
     //Automatic testing QS of phonak eStore/eServices
     private static WebDriver driver;
     private static String baseUrl;

@@ -5,7 +5,7 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
-public class estoreMainPage {
+public class pEstoreMainPage {
 
     @FindBy(css="div.search-bar.left")
     private WebElement searchbarleft;
@@ -36,7 +36,7 @@ public class estoreMainPage {
     private WebElement shopLoginButton;
     */
 
-    public estoreMainPage(WebDriver driver) {
+    public pEstoreMainPage(WebDriver driver) {
         PageFactory.initElements(driver, this);
     }
 

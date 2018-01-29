@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Created by 11spantong on 16.11.2017.
  */
-public class shopLoginPage {
+public class pShopLoginPage {
     private static WebDriver driver;
     private static String baseUrl = "https://www.phonakpro.com/";
     private static String p="AkwaB4so@1Phonakte#Wal0Unitron#456AdvancedBionics#007".substring(10,22);
@@ -37,7 +37,7 @@ public class shopLoginPage {
 
 
 
-    public shopLoginPage(WebDriver driver) {
+    public pShopLoginPage(WebDriver driver) {
         PageFactory.initElements(driver, this);
     }
 

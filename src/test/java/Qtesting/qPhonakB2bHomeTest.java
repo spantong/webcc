@@ -1,6 +1,6 @@
 package Qtesting;
 
-import Ptesting.shopLoginPage;
+import Ptesting.pShopLoginPage;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -9,7 +9,6 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -17,7 +16,7 @@ import java.util.List;
 
 import static org.junit.Assert.fail;
 
-public class phonakB2bHomeTest {
+public class qPhonakB2bHomeTest {
     //Automatic testing QS of phonak eStore/eServices
     private static WebDriver driver;
     private static String baseUrl;
@@ -36,7 +35,7 @@ public class phonakB2bHomeTest {
     public void testphonakB2bHomeTest() throws Exception {
         // set up explicit wait
         WebDriverWait wait = new WebDriverWait(driver, 10);
-        shopLoginPage loginPage = new shopLoginPage(driver);
+        pShopLoginPage loginPage = new pShopLoginPage(driver);
         try {
             driver.get(baseUrl + "/com/en/home.html");
             //Workaround: cannot click if element is not in visible area of browser (Chrome) need scrolling
