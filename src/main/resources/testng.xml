@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Sanity Tests">
+    <test name="P1 Test">
+        <groups>
+            <run>
+                <include name="b2b"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="Ptesting.pEnterB2bShop"/>
+        </classes>
+    </test>
+    <test name="P2 Test">
+        <groups>
+            <run>
+                <include name="b2b1"/>
+            </run>
+        </groups>
+        <classes>
+            <class name="Ptesting.pEnterB2bShop"/>
+        </classes>
+    </test>
+</suite>

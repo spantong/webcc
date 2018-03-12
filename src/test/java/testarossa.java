@@ -44,6 +44,7 @@ public class testarossa {
         driver.navigate().refresh();
         driver.navigate().back();
         Assert.assertTrue(driver.getTitle().startsWith("Google"));
+        System.out.println("Page title asserted: "+driver.getTitle());
         System.out.println("Testarossa uno");
     }
     @Test

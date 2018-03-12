@@ -33,45 +33,40 @@ public class qPhonakB2bHomeTest {
     }
     @Test
     public void testphonakB2bHomeTest() throws Exception {
-        // set up explicit wait
-        WebDriverWait wait = new WebDriverWait(driver, 10);
-        pShopLoginPage loginPage = new pShopLoginPage(driver);
+
+        WebDriverWait wait = new WebDriverWait(driver, 10); // set up explicit wait
+        pShopLoginPage loginPage = new pShopLoginPage(driver); // init shop login page object
         try {
-            driver.get(baseUrl + "/com/en/home.html");
+            driver.get(baseUrl + "/com/en/home.html"); // get b2b portal
             //Workaround: cannot click if element is not in visible area of browser (Chrome) need scrolling
-            WebElement location = driver.findElement(By.linkText("Change"));
-            // Use javascript to click which works w/o scrolling to that element
-            JavascriptExecutor js = (JavascriptExecutor) driver;
-            js.executeScript("arguments[0].click();", location);
+            WebElement location = driver.findElement(By.linkText("Change")); // detect cntry selection elelment at the buttom of the page
+            // Use javascript to click, which works w/o scrolling to that element
+            JavascriptExecutor js = (JavascriptExecutor) driver; // imply js
+            js.executeScript("arguments[0].click();", location); // get cntry selection page
 
-            WebElement gotoo = wait.until((ExpectedConditions.elementToBeClickable(By.cssSelector("a[href*='/north-america/us_en']"))));
-            gotoo.click();
-            //driver.findElement(By.linkText("United States")).click();
-            loginPage.clickCountryLogin(driver);
-            List<WebElement> loginBtn = driver.findElements(By.cssSelector("a[href='/bin/phonakpro/login']"));
+            WebElement gotoo = wait.until((ExpectedConditions.elementToBeClickable(By.cssSelector("a[href*='/north-america/us_en']")))); // wait for usa link appearance
+            gotoo.click(); // goto usa b2b portal
 
-            if (!loginBtn.isEmpty()) {
-                WebElement loginBtnElement = loginBtn.get(0);
+            loginPage.clickCountryLogin(driver); // login button
+            List<WebElement> loginBtn = driver.findElements(By.cssSelector("a[href='/bin/phonakpro/login']")); // check for submit button on the login page
+            wait.until((ExpectedConditions.elementToBeClickable(By.name("pf.username"))));  // chk input field that should appear
+            /*
+            if (!loginBtn.isEmpty()) { // check page contains a login button, could be not found
+                WebElement loginBtnElement = loginBtn.get(0); // get that element to check its attribute
                 // use javascript to click on invisible element (visible only if mouse moved over it)
-                if (loginBtnElement.isDisplayed()) {
+                if (loginBtnElement.isDisplayed()) { // element status is visible
                     //System.out.println("Login is displayed");
                     loginBtnElement.click();
-                } else {
+                } else { // element status is not visible
                     //System.out.println("Login is NOT displayed");
-                    js.executeScript("arguments[0].click();", loginBtnElement);
-/*
-                    //js.executeScript("arguments[0].st‌​yle.display='block';‌​", targetDiv);
-                    js.executeScript("document.getElementsByClassName('account-info-dropdown')[0].style.display='block'");
-                    wait.until((ExpectedConditions.elementToBeClickable(By.cssSelector("a[href='/bin/phonakpro/login']"))));
-                    WebElement login = driver.findElement(By.cssSelector("a[href='/bin/phonakpro/login']"));
-                    login.click();
-*/
+                    js.executeScript("arguments[0].click();", loginBtnElement); // js can click on an invisible element
                 }
-                wait.until((ExpectedConditions.elementToBeClickable(By.name("pf.username"))));
+                wait.until((ExpectedConditions.elementToBeClickable(By.name("pf.username"))));  // chk input field that should appear
             }
-            else{
+            else{ // no login submit button on the actual page
                 System.out.println("Logout not possible, missing that element!");
             }
+            */
         }
 //        catch (Exception e) {
 //            e.printStackTrace();

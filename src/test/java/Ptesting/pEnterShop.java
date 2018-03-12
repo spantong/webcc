@@ -13,6 +13,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.fail;
 
@@ -27,7 +28,7 @@ public class pEnterShop {
     private static String fr = "a[href*='europe/fr_fr']"; // link of France country selection
     private static String usa = "a[href*='/north-america/us_en']"; // link of usa country selection
     private static String uk = "a[href*='/europe/uk_en']"; // link of uk country selection
-
+    private static String shop_anchor, c_param;
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -83,9 +84,23 @@ public class pEnterShop {
 //  public void main(String[] args)throws Exception {
     public void testEnterShop() throws Exception {
 
-        WebDriverWait wait = new WebDriverWait(driver, 10);
+        WebDriverWait wait = new WebDriverWait(driver, 60);
         pShopLoginPage loginPage = new pShopLoginPage(driver);
         try {
+            c_param = System.getProperty("country.cli");
+
+            if(c_param != null){ // check if there is a value entered with cmd line
+                System.out.println("country = " +c_param);
+                if(c_param.contentEquals("fr"))
+                    //country = fr;
+                if(c_param.contentEquals("us"))
+                    //country = usa;
+                if(c_param.contentEquals("uk"))
+                    //country = uk;
+                if(c_param.contentEquals("ca")){}
+                    //country = ca;
+                //System.out.println("country.cli = " +country);
+            }
             String b_param = System.getProperty("baseUrl.cli"); // get start url
             String baseUrl = b_param; // save baseurl ex cmd parameter
             // System.out.println("baseurl: " +baseUrl);
@@ -116,8 +131,53 @@ public class pEnterShop {
                 anchor = item.getAttribute("href"); //get the url of the page
                 urlitem = driver.getCurrentUrl(); //get actual page url to compare
                 if (!anchor.equals(urlitem)){ // only change if it's not the the same (landingpage)
-                    if(!anchor.contains("home") && !anchor.contains("user-management") && !anchor.contains("order-history") && !anchor.contains("documenthistory")){ // skip these pages
-                        driver.get(anchor);  // change to that page (clicking somehow not working here)
+                    //if(!anchor.contains("home") && !anchor.contains("user-management") && !anchor.contains("order-history") && !anchor.contains("documenthistory")){ // skip these pages
+                    if(!anchor.contains("home") && !anchor.contains("logout")){
+                        if (!anchor.contains("user-management")) {  // UM is not working if user role is professional or viewer !
+                            long startTime = System.nanoTime();
+                            driver.get(anchor);  // change to that page (clicking somehow not working here)
+                            if (anchor.contains("order-history")) { // just for debugging
+                                WebElement testa = driver.findElement(By.cssSelector("div[class='history-list waiting']"));
+                                System.out.println("Spinner content: "+testa.getAttribute("onerHTML"));
+                                wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("div[class='history-list waiting']")));
+                                long difference = System.nanoTime() - startTime;
+                                System.out.println("Total OH execution time: " +
+                                        String.format("%d min, %d sec",
+                                                TimeUnit.NANOSECONDS.toHours(difference),
+                                                TimeUnit.NANOSECONDS.toSeconds(difference) -
+                                                        TimeUnit.MINUTES.toSeconds(TimeUnit.NANOSECONDS.toMinutes(difference))));
+                                //startTime = System.nanoTime(); // reset
+                            }
+                            if (anchor.contains("salesforce")) { // Lyric/Alps/Salesforce processing
+                                wait.until(ExpectedConditions.urlContains("salesforce"));
+                                System.out.println("Jump to Alps URL : "+driver.getCurrentUrl());
+                                driver.navigate().back(); // go back to shop
+                                driver.navigate().back(); // go back to shop
+                                wait.until(ExpectedConditions.urlContains("shop."));
+                                System.out.println("Return to Shop URL : "+driver.getCurrentUrl());
+                            }
+
+                        } else { // Special processing for user profile Professional and viewer, bcoz they are not allow to access user management
+                            List<WebElement> sun_testing_now = driver.findElements(By.cssSelector("script"));  // get all <SCRIPT> elements
+                            System.out.println("SCRIPT tags found: " + sun_testing_now.size());  // show how many are there
+                            for (int s=0; s < sun_testing_now.size(); s++){ // loop through the list to get the one with user role in it
+                                WebElement sun = sun_testing_now.get(s);  // set the actual from the list
+                                boolean scriptFound = sun.getAttribute("innerHTML").contains("dataLayer ="); // check the data started with this content
+                                if (scriptFound) {  // Yes this one has the user role in it
+                                    String scriptText = sun.getAttribute("innerHTML"); // get the string text
+                                    if (scriptText.contains("Professional") || scriptText.contains("Viewer")){ // skip this as it shows error (should be fixed by Michael R. acc. Jira)
+                                        System.out.println("SCRIPT item nr. "+s+" content: " + scriptText);
+                                        System.out.println("This page is skipped: " + anchor+" Professional and Viewer role are not allowed to access UM.");
+                                        break; // exit loop without visit UM, due this will get blocked by processing w. error
+                                    }
+                                    System.out.println("SCRIPT item nr. "+s+" content: " + scriptText);
+                                    // cont'd to user management page for all other user roles than the two above
+                                    driver.get(anchor);  // change to that page (clicking somehow not working here, use driver.get)
+                                    break; // exit loop since we are now not on the same page  anymore
+                                }
+                            }
+
+                        }
                     }
                     else{
                         System.out.println("This page is skipped: " + anchor);
@@ -149,7 +209,8 @@ public class pEnterShop {
             WebElement inputElement = searchInput.get(0); // get the input element
             JavascriptExecutor js = (JavascriptExecutor) driver;  // using javascript
             js.executeScript("arguments[0].setAttribute('value', 'blabla')", inputElement); // input something in the search field
-
+// test subroutines
+            pEnterB2bShop.eCartClear(driver);
             // end shop checks
             driver.get(baseUrl); // go to shop main page
             profile = wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("a[href*='logout']"))));  // check logout menu

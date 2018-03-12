@@ -1,12 +1,11 @@
 package Ptesting;
 
 import org.junit.Assert;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.w3c.dom.NodeList;
 
 import java.util.List;
 
@@ -34,16 +33,35 @@ public class pShopLoginPage {
     @FindBy(css = "button.button.button-submit")
     private WebElement shopLoginButton;
 
+    @FindBy(className = "account-name")
+    private WebElement myAccount;
 
-
+    @FindBy(className = "create-id-button")
+    private WebElement createId;
 
     public pShopLoginPage(WebDriver driver) {
         PageFactory.initElements(driver, this);
     }
 
+    public void getCreateId(WebDriver driver) {
+        String lableText = createId.getText();
+        System.out.println("Create ID text: "+lableText); //output what text (language) is there
+    }
+
+    public void getMyAccount(WebDriver driver) {
+        List<WebElement> ma_child = myAccount.findElements(By.tagName("span")); // get all elements
+        String topLine=" ";
+        if (ma_child.size()==0){
+            topLine = " Missing My Account Menu Bar on top line!";
+        }
+        String actualPage = driver.getCurrentUrl();
+        System.out.println("On this page: " +actualPage);
+        System.out.println("My Account content is : "+ma_child.size()+topLine); //output what text (language) is there
+    }
+
     public void loadB2bPage(WebDriver driver) {
         String b1=baseUrl; // copy
-        baseUrl = "xxx";
+        baseUrl = "xxx"; //test
         baseUrl=b1;
         //System.out.println("baseUrl = " +b1);
         String b_param = System.getProperty("baseUrl.cli");
@@ -52,9 +70,10 @@ public class pShopLoginPage {
             baseUrl = b_param; // set baseurl ex cmd parameter
             //System.out.println("baseUrl.cli = " +baseUrl);  // output actual value
         }
-        // System.out.println("baseurl: " +baseUrl);
+
         driver.get(baseUrl + "/com/en/home.html");
         Assert.assertEquals(driver.getCurrentUrl(), baseUrl + "com/en/home.html");
+        System.out.println("Starting at b2b portal: " +baseUrl);
     }
 
     public void enterUsername(WebDriver driver) {
@@ -89,13 +108,30 @@ public class pShopLoginPage {
     public void clickLoginButton() {
         loginButton.click();
     }
+
     public void clickShopLoginButton() {
         shopLoginButton.click();
     }
 
-    public void clickForgotPw() {
+    public void ForgotPwUn(WebDriver driver) {
         //to do: there are two such links to identified
-        forgotPwUn.click();
+        List<WebElement> helplink_anchors = forgotPwUn.findElements(By.tagName("a")); // get all anchors within first helplink class
+        if (helplink_anchors.size() <1){
+            System.out.println("Forgot Passwort/Username link missing");
+        }
+        else {
+            String anchor;
+            WebElement item, child;
+
+            for (int i=0;i < helplink_anchors.size(); i++){ // loop through each in the list
+                item = helplink_anchors.get(i);
+                //child = item.findElement(By.tagName("a")); //get anchor
+                //anchor = item.getAttribute("href"); //get the url of the page
+                anchor = item.getText();
+                System.out.println("Helplink ...: "+anchor); //output what link has been found
+            }
+        }
+        //forgotPwUn.click();
     }
 
     public void clickChange(WebDriver driver){
@@ -120,7 +156,6 @@ public class pShopLoginPage {
                 JavascriptExecutor js = (JavascriptExecutor) driver;
                 js.executeScript("arguments[0].click();", loginBtnElement);
             }
-
         }
     }
 
