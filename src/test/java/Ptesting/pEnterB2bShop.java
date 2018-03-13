@@ -1,6 +1,7 @@
 package Ptesting;
 
 //import com.sun.istack.internal.localization.NullLocalizable;
+import junit.framework.TestFailure;
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -904,10 +905,10 @@ public class pEnterB2bShop {
 
                 driver.get("file://" + myScreenshot.getAbsolutePath());
             }
-
+            throw new Exception("!!! A L A R M !!!");  // test failed
         }
         finally {
-            System.out.println("The test is a Success !!!");
+            System.out.println("The test is over !!!");
             // close the Browser
             // driver.quit(); //do this in @AfterClass
         }
@@ -915,7 +916,7 @@ public class pEnterB2bShop {
 
     private static void sendOrder(WebDriver driver) {
 
-        WebDriverWait wait = new WebDriverWait(driver, 30);
+        WebDriverWait wait = new WebDriverWait(driver, 60);
         WebElement sCart = driver.findElement(By.cssSelector("a[class='shopping-cart']")); // get the cart
         WebElement iCart = sCart.findElement(By.cssSelector("span[id='items-in-cart']")); // get the items in the cart
         String cItems = iCart.getText();
@@ -982,7 +983,7 @@ public class pEnterB2bShop {
                 wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("section.checkout.checkout-thank-you")))); // Wait for order sent confirmation
                 System.out.println("Order SENT!");
             }else {
-                System.out.println("NO Order has been sent!");
+                System.out.println("You are on this platform "+enviroment+" NO Order has been sent!");
             }
         }
         else{
