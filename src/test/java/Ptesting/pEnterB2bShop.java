@@ -138,8 +138,8 @@ public class pEnterB2bShop {
                 WebElement gotoo = wait.until((ExpectedConditions.elementToBeClickable(By.cssSelector(country)))); // wait for specific element country selection
                 String gotoo_anchor = gotoo.getAttribute("href"); //get the url of the link
                 System.out.println("Click on link "+gotoo_anchor);  // output on console line
-                gotoo.click();  // result will be according AEM setting
-
+                //gotoo.click();  // result will be according AEM setting
+                driver.get(gotoo_anchor);  // change to country b2b portal
                 // Check in case we are testing on other system then P, that we are on that environment after click on country selection which is static to go to P most of the time.
                 // Get command line input if started that way or via contineous integration (CI)
                 // String b_param = System.getProperty("baseUrl.cli");
