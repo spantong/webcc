@@ -662,9 +662,12 @@ public class pEnterB2bShop {
                                     inpString = Integer.toString(inputValue); // int to string
                                 }
                                 // due to the chacteristic of the browser interaction filling in the value above doesn't draw any audigram lines, we need copy to left and than back to get the wanted visibility of the lines
-                                driver.findElement(By.cssSelector("div[id='cta-copy-left']")).click(); // copy same audiogram to the left, which draws the lines
-                                driver.findElement(By.cssSelector("div[id='cta-copy-right']")).click(); // vice versa to see the lines also on the right side
-
+//                                driver.findElement(By.cssSelector("div[id='cta-copy-left']")).click(); // copy same audiogram to the left, which draws the lines
+//                                driver.findElement(By.cssSelector("div[id='cta-copy-right']")).click(); // vice versa to see the lines also on the right side
+                                WebElement drawAudiogram = driver.findElement(By.cssSelector("div[id='cta-copy-left']"));  // get the left element to click on
+                                js.executeScript("arguments[0].click();", drawAudiogram); // click on item with javascript code
+                                drawAudiogram = driver.findElement(By.cssSelector("div[id='cta-copy-right']"));  // get the right side element to click on
+                                js.executeScript("arguments[0].click();", drawAudiogram); // click on item with javascript code
                                 // check impression processing
                                 WebElement earImpression = driver.findElement(By.cssSelector("div.step.select-ear-impression")); // get step 4 container
                                 // do the right side
