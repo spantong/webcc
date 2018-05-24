@@ -74,6 +74,14 @@ public class pShopLoginPage {
         driver.get(baseUrl + "/com/en/home.html");
         Assert.assertEquals(driver.getCurrentUrl(), baseUrl + "com/en/home.html");
         System.out.println("Starting at b2b portal: " +baseUrl);
+        List<WebElement> popupdialog = driver.findElements(By.xpath("//*[@class='modal modal-alert'] //*[@class='button']/a"));
+        if (popupdialog.size()!=0) {  // accept cookie dialog implemented
+            WebElement iagree = popupdialog.get(0); // get the clickable element
+            JavascriptExecutor js = (JavascriptExecutor) driver;
+            js.executeScript("arguments[0].click();", iagree); // just click on agree to get rid of it
+            // js.executeScript("arguments[0].click();", location);
+        }
+        //*[@class='modal modal-alert'] //*[@class='button']/a
     }
 
     public void enterUsername(WebDriver driver) {

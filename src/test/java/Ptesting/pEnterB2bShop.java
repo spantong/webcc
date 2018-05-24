@@ -42,6 +42,18 @@ public class pEnterB2bShop {
     private static String nStep, inputsn;
     private static String shop_anchor, c_param, anchor;
     private static WebElement store;
+    private static String tobechecked = "...4567890"; //
+    /*
+    1=advanced mode BTE
+    2= " Wireless Accessories
+    3=Earpieces
+    4=
+    .
+    */
+    private static String partsToBeChecked = ".23..."; // Subcategories indicators
+    private static String batteriesMaintenanceToBeChecked = "...."; //
+    private static String inOficceMaterialToBeChecked = "...."; //
+
 
 
 
@@ -204,7 +216,7 @@ public class pEnterB2bShop {
                 anchor = child.getAttribute("href"); //get the url of the page
                 urlitem = driver.getCurrentUrl(); //get actual page url to compare
                 if (!anchor.equals(urlitem)){ // only change if it's not the the same (landingpage)
-                    if(!anchor.contains("user-management") && !anchor.contains("salesforce")){ // skip user-management order- and documenthistory due to long processing
+                    if(!anchor.contains("user-management") && !anchor.contains("salesforce") && !anchor.contains("/Chat") && !anchor.contains("/home.html")){ // skip user-management order- and documenthistory due to long processing and skip chat and skip b2b home.html
                         // if(!anchor.contains("user-management") && !anchor.contains("order-history") && !anchor.contains("documenthistory") && !anchor.contains("salesforce")){ // skip user-management order- and documenthistory due to long processing
                         driver.get(anchor);  // change to that page (clicking somehow not working here)
                         if (anchor.contains("warranty") && (!anchor.contains("/extend"))) {
@@ -383,9 +395,9 @@ public class pEnterB2bShop {
                             String imgModeOnOff, configure;
                             List<WebElement> list, dk_option, modeElement, bteFilterElement;
                             String urlnow = driver.getCurrentUrl(); // get url to check language specific site, ie. for FR "Aides-auditives"
-                            if (href.contains("hearing-aids") || urlnow.contains("Aides-auditives") || urlnow.contains("Hearing-Instruments")) { // check to process HI category related actions
+                            if (href.contains("hearing-aids") || urlnow.contains("Aides-auditives") || urlnow.contains("Hearing-Instruments") || urlnow.contains("H%C3%B6rger%C3%A4te")) { // check to process HI category related actions (DE=Hörgeräte)
                             //if (tImageElement.contains("hearing-aids")) { // check to process HI category related actions
-//                                driver.navigate().refresh(); // refreh to get rid of the account popup that appears if cart is empty
+//                                driver.navigate().refresh(); // refresh to get rid of the account popup that appears if cart is empty
                                 modeElement = driver.findElements(By.cssSelector("a[title='toggle fast track mode']"));
                                 if (modeElement.size()==0){ //mode switch NOT available
                                     bteFilterElement = driver.findElements(By.xpath("//label[text()[contains(., ' BTE')]]")); // get BTE filter item
@@ -423,7 +435,33 @@ public class pEnterB2bShop {
                                             String addOKdialogText = addOKdialogP.getText(); // pull the text to var to output on console
                                             System.out.println("Add to Cart Confirm Text : "+addOKdialogText); // console output
                                         }
-                                        //break; // we are done, exit loop
+                                        //enter product detail page and set up Order Type to Client Order
+                                        WebElement pdetails = products.findElement(By.cssSelector("div.product-attributes a")); // get the link to product details
+                                        js.executeScript("arguments[0].click();", pdetails); // access detail page
+                                        WebElement firstStepClient = wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div#client")))); // Wait for the first option step to appear
+
+                                        WebElement selectClientOption = firstStepClient.findElement(By.cssSelector("input#cta-client")); // option element client option
+                                        String hiConfiguratorPage = driver.getCurrentUrl(); // Save actual url
+
+                                        js.executeScript("arguments[0].click();", selectClientOption); // ensure this client option is selected
+                                        //String hiConfiguratorPage1 = driver.getCurrentUrl(); // Save actual url
+
+                                        if (hiConfiguratorPage.equals(driver.getCurrentUrl())) { //
+                                            //driver.navigate().refresh(); // refresh to get rid of the account popup that appears if cart is empty
+                                            //wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div.main-nav.sticky_element")))); // Wait for new page loading finish
+                                            wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div.modal-dialog")))); // Wait element containing dialog
+                                            List<WebElement> xdialog = driver.findElements(By.cssSelector("div[class='modal-container'] div[class*='modal-dialog'] div[class*='modal-footer'] a[href*='setOrderType']"));  // any dialog there?
+                                            if (xdialog.size()>0){
+                                                System.out.println("Dialog box change to Client order is shown on screen");
+                                                WebElement change2ClientOrder = xdialog.get(0); // get client button element
+                                                change2ClientOrder.click(); // change 2 client order
+                                                wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div[class='modal-container']")))); // Wait element containing dialog
+                                                change2ClientOrder = wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div[class='modal-container'] div[class*='modal-dialog'] div[class*='modal-footer'] a"))));  // any dialog there?
+                                                change2ClientOrder.click(); // confirm OK
+                                                System.out.println("Changed to Client order and confirmed with OK");
+                                            }
+                                        }
+
                                     }
                                 }else{ //Advanced mode switch available
                                     wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div[class='sub-categories']")))); // Wait for element
@@ -441,14 +479,16 @@ public class pEnterB2bShop {
                                                 list = driver.findElements(By.cssSelector("div[class='sub-categories'] input[type='checkbox']")); // get all filters
                                                 System.out.println("Advanced mode ON, total FILTERS displayed on screen: " + list.size());
                                                 // add a bte device to cart
+                                                /*
                                                 if (b_param.contains("qs-www.phonakpro.com")){  // temporary skip qs due to hybris upgrade
                                                     System.out.println("Please ignore: No Filter by BTE possible bcoz of empty product list will be displayed"); // console output founded products
                                                 }else { // not on qs no bother
+                                                */
                                                     bteFilter = driver.findElement(By.xpath("//label[text()[contains(., ' BTE')]]")); // get BTE filter item
                                                     bteCheck = bteFilter.findElement(By.cssSelector("input"));
                                                     js.executeScript("arguments[0].click();", bteCheck); // click on element with javascript code
                                                     wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("a[title='toggle fast track mode']")))); // Wait for element
-                                                }
+                                                //}
                                                 //count HI items on screen
                                                 products = driver.findElement(By.cssSelector("ul.product-list")); // container of products
                                                 list = products.findElements(By.tagName("li")); // products tag
@@ -471,6 +511,34 @@ public class pEnterB2bShop {
                                                 }
 
                                                 onOff--; // decrease loop counter
+
+                                                //enter product detail page and set up Order Type to Client Order
+                                                WebElement pdetails = products.findElement(By.cssSelector("div.product-attributes a")); // get the link to product details
+                                                js.executeScript("arguments[0].click();", pdetails); // access detail page
+                                                WebElement firstStepClient = wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div#client")))); // Wait for the first option step to appear
+
+                                                WebElement selectClientOption = firstStepClient.findElement(By.cssSelector("input#cta-client")); // option element client option
+                                                String hiConfiguratorPage = driver.getCurrentUrl(); // Save actual url
+
+                                                js.executeScript("arguments[0].click();", selectClientOption); // ensure this client option is selected
+                                                //String hiConfiguratorPage1 = driver.getCurrentUrl(); // Save actual url
+
+                                                if (hiConfiguratorPage.equals(driver.getCurrentUrl()) && (driver.getCurrentUrl().contains("phonakint") || driver.getCurrentUrl().contains("phonakde"))) { //
+                                                    //driver.navigate().refresh(); // refresh to get rid of the account popup that appears if cart is empty
+                                                    //wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div.main-nav.sticky_element")))); // Wait for new page loading finish
+                                                    wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div.modal-dialog")))); // Wait element containing dialog
+                                                    List<WebElement> xdialog = driver.findElements(By.cssSelector("div[class='modal-container'] div[class*='modal-dialog'] div[class*='modal-footer'] a[href*='setOrderType']"));  // any dialog there?
+                                                    if (xdialog.size()>0){
+                                                        System.out.println("Dialog box change to Client order is shown on screen");
+                                                        WebElement change2ClientOrder = xdialog.get(0); // get client button element
+                                                        change2ClientOrder.click(); // change 2 client order
+                                                        wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div[class='modal-container']")))); // Wait element containing dialog
+                                                        change2ClientOrder = wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div[class='modal-container'] div[class*='modal-dialog'] div[class*='modal-footer'] a"))));  // any dialog there?
+                                                        change2ClientOrder.click(); // confirm OK
+                                                        System.out.println("Changed to Client order and confirmed with OK");
+                                                        driver.navigate().back(); // return back one page
+                                                    }
+                                                }
                                             }
                                             if (imgModeOnOff.contains("mode-off")) { // advanced mode is OFF
                                                 //count sub categories
@@ -479,7 +547,11 @@ public class pEnterB2bShop {
                                                 subcat = driver.findElement(By.cssSelector("div[class='sub-categories']")); // get container
                                                 list = subcat.findElements(By.cssSelector("li")); // get all sub categories within container
                                                 System.out.println("Advanced mode OFF, total SUB-CATEGORIES displayed on screen: " + list.size());
+
                                                 onOff--; // decrease loop counter
+                                                if (!tobechecked.contains("1")){  // no advanced mode to be checked
+                                                    onOff--; // decrease loop counter
+                                                }
                                             }
                                             if (i1 == onOff) {
                                                 break;
@@ -501,7 +573,7 @@ public class pEnterB2bShop {
                                 }
                             }else if (href.contains("wireless-accessories")){ // check to process wireless accessories category related actions
 //                                driver.navigate().refresh(); // refreh to get rid of the account popup that appears if cart is empty
-                                wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("ul.product-list")))); // Wait for tile elements container
+                                wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div.sub-categories")))); // Wait for element
                                 List<WebElement> aMode = driver.findElements(By.cssSelector("a[title='toggle fast track mode']")); // get the advanced mode switch
                                 if (aMode.size()>0){
                                     mode = driver.findElement(By.cssSelector("a[title='toggle fast track mode']")); // reset the advanced mode switch
@@ -548,7 +620,7 @@ public class pEnterB2bShop {
                                             list = subcat.findElements(By.cssSelector("li")); // get all sub categories within container
                                             System.out.println("Advanced mode OFF, total SUB-CATEGORIES displayed on screen: "+list.size());
                                             onOff--; // decrease loop counter
-                                            if (urlitem.contains("q-shop.phonakpro.com/phonakint")){ // international sales gc no have advanced mode ON/OFF in qs
+                                            if (urlitem.contains("q-shop.phonakpro.com/phonakint") || !tobechecked.contains("2")){ // international sales gc no have advanced mode ON/OFF in qs
                                                 onOff=0; // trigger exit loop if phonakint
                                             }
                                         }
@@ -571,7 +643,7 @@ public class pEnterB2bShop {
                                         if (aMode.size()>0){
                                             mode = driver.findElement(By.cssSelector("a[title='toggle fast track mode']")); // reset the advanced mode switch
                                         }else{
-                                            //count HI items on screen
+                                            //count items on screen
                                             products = driver.findElement(By.cssSelector("ul.product-list")); // container of products
                                             list = products.findElements(By.tagName("li")); // products tag
                                             System.out.println("Advanced mode ON, total PRODUCTS displayed on screen: "+list.size()); // console output founded products
@@ -597,7 +669,7 @@ public class pEnterB2bShop {
                                         }
                                     }
                                 }
-                            } else if (href.contains("earpieces") && (!urlitem.contains("q-shop.phonakpro.com/phonakint"))){ // check to process earpiece (excl. gc1101 int sales)
+                            } else if (href.contains("earpieces") && tobechecked.contains("3")){ // check to process earpiece (excl. gc1101 int sales) && (!urlitem.contains("q-shop.phonakpro.com/phonakint"))
                                 driver.navigate().refresh(); // refresh to get rid of the account popup that appears if cart is empty
                                 wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div[id='custom-fittings']")))); // Wait for element
                                 cfitting = driver.findElement(By.cssSelector("div[id='custom-fittings']")); // get the custom fitting container
@@ -652,7 +724,7 @@ public class pEnterB2bShop {
                                     //inputField.click();
                                     JavascriptExecutor jsun = (JavascriptExecutor) driver;
                                     String jscode;
-                                    jscode = String.format("arguments[0].value='%s';",inpString); // set up javascript format to chang value
+                                    jscode = String.format("arguments[0].value='%s';",inpString); // set up javascript format to change value
                                     jsun.executeScript(jscode, inputField); // run javascript command with fld as param
                                     if (inputValue==5){ // Title line
                                         System.out.println("Following values are set in the Audiogram:");
@@ -687,14 +759,32 @@ public class pEnterB2bShop {
                                         System.out.println("File Upload option selected for right ear");
                                     }else if (actualOption.contains("file-impression")){
                                         System.out.println("Enter S/N option selected for right ear");
+                                        mi_iei = iei; // save this to set as default
                                     }else if (actualOption.contains("mail-in")){
                                         System.out.println("Mail-in option selected for right ear");
                                         mi_iei = iei; // save this to set as default
                                     }
                                 }
+                                // check and set the default Ear Impression option
                                 itemChecked = form_options.get(mi_iei);
                                 js.executeScript("arguments[0].click();", itemChecked);
-                                System.out.println("Final Mail-in option selected for right ear");
+                                if (mi_iei==1){  // second option selected "Use an impression on file"
+                                    String serialNr = "X1X2X3"; // Serial nummer value
+                                    /*
+                                    WebElement inputSN = driver.findElement(By.cssSelector("input#Right-impression-serial"));  // get all input fld of S/N
+                                    JavascriptExecutor jssn = (JavascriptExecutor) driver;
+                                    String jsCodeFormat;
+
+                                    jsCodeFormat = String.format("arguments[0].value='%s';",serialNr); // set up javascript formatting value
+                                    jssn.executeScript(jsCodeFormat, inputSN); // run javascript command with fld inputSN as param
+                                    */
+
+                                    driver.findElement(By.id("Right-impression-serial")).sendKeys((serialNr));  // set S/N
+                                    System.out.println("Use an impression on file option selected for right ear with S/N: "+serialNr);
+                                }else if(mi_iei==2){ // must be Mail in option selected
+                                    System.out.println("Final Mail-in option selected for right ear");
+                                }
+
 
                                 // the same for left side
                                 form_options = earImpression.findElements(By.cssSelector("div[class='type'] input[name='ear-impression-Left']")); //find all available options
@@ -713,7 +803,22 @@ public class pEnterB2bShop {
                                 }
                                 itemChecked = form_options.get(mi_iei);
                                 js.executeScript("arguments[0].click();", itemChecked);
-                                System.out.println("Final Mail-in option selected for left ear");
+                                if (mi_iei==1){  // second option selected "Use an impression on file"
+                                    String serialNr = "Y1Y2Y3"; // Serial nummer value for left side
+                                    /*
+                                    WebElement inputSN = driver.findElement(By.cssSelector("input#Left-impression-serial"));  // get all input fld of S/N
+                                    JavascriptExecutor jssn = (JavascriptExecutor) driver;
+                                    String jsCodeFormat;
+
+                                    jsCodeFormat = String.format("arguments[0].value='%s';",serialNr); // set up javascript formatting value
+                                    jssn.executeScript(jsCodeFormat, inputSN); // run javascript command with fld inputSN as param
+                                    */
+                                    driver.findElement(By.id("Left-impression-serial")).sendKeys((serialNr));  // set S/N
+                                    System.out.println("Use an impression on file option selected for left ear with S/N: "+serialNr);
+                                }else if(mi_iei==2){ // must be Mail in option selected
+                                    System.out.println("Final Mail-in option selected for left ear");
+                                }
+
 
                                 // next page continuation
                                 nextbtn = driver.findElement(By.cssSelector("div.input-cta-configure-product.ng-binding")); // get next button element
@@ -826,37 +931,40 @@ public class pEnterB2bShop {
                                 JavascriptExecutor jssp = (JavascriptExecutor) driver;
                                 WebElement siTextArea = allSteps.findElement(By.cssSelector("textarea"));
                                 String textValue = "This is a test please ignore.";
-                                String jscode = String.format("arguments[0].value='%s';",textValue); // set up javascript format to chang value
+                                String jscode = String.format("arguments[0].value='%s';",textValue); // set up javascript format to change value
                                 jssp.executeScript(jscode, siTextArea); // run javascript command with fld as param
                                 System.out.println("Special instructions text added: " +textValue);
                                 allSteps = wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div[class='input-add-to-cart ng-binding']")))); // Wait for element input-add-to-cart ng-binding
-                                // add to card using javascript
-                                js.executeScript("arguments[0].click();", allSteps);
-                                //allSteps.click();  // put product into cart
-                                List<WebElement> addOKdialog = driver.findElements(By.cssSelector("div.notification.notification-cart"));  // add to card confirmation text element
-                                if (addOKdialog.size()>0){
-                                    WebElement addOKdialogElement = addOKdialog.get(0); //
-                                    WebElement addOKdialogP = addOKdialogElement.findElement(By.tagName("p"));
-                                    String addOKdialogText = addOKdialogP.getText();
-                                    System.out.println("Add to Cart Confirm Text : "+addOKdialogText);
-                                }
-                                wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div[class='modal-container']")))); // Wait element containing dialog
-                                List<WebElement> xdialog = driver.findElements(By.cssSelector("div[class='modal-container'] div[class*='modal-dialog'] div[class*='modal-footer'] a[href*='setOrderType']"));  // any dialog there?
-                                if (xdialog.size()>0){
-                                    System.out.println("Dialog box Client order is shown on screen");
-                                    WebElement change2ClientOrder = xdialog.get(0); // get client button element
-                                    change2ClientOrder.click(); // change 2 client order
+                                if (!driver.getCurrentUrl().contains("q-shop.phonakpro.com")){  // skip earpieces add to cart due SAP calculation error if access cart in shop
+
+                                    // add to card using javascript
+                                    js.executeScript("arguments[0].click();", allSteps);
+                                    //allSteps.click();  // put product into cart
+                                    List<WebElement> addOKdialog = driver.findElements(By.cssSelector("div.notification.notification-cart"));  // add to card confirmation text element
+                                    if (addOKdialog.size()>0){
+                                        WebElement addOKdialogElement = addOKdialog.get(0); //
+                                        WebElement addOKdialogP = addOKdialogElement.findElement(By.tagName("p"));
+                                        String addOKdialogText = addOKdialogP.getText();
+                                        System.out.println("Add to Cart Confirm Text : "+addOKdialogText);
+                                    }
                                     wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div[class='modal-container']")))); // Wait element containing dialog
-                                    change2ClientOrder = wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div[class='modal-container'] div[class*='modal-dialog'] div[class*='modal-footer'] a"))));  // any dialog there?
-                                    change2ClientOrder.click(); // confirm OK
-                                    System.out.println("Changed to Client order and confirmed with OK");
-                                    allSteps = wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div[class='input-add-to-cart ng-binding']")))); // Wait for element input-add-to-cart ng-binding
-                                    js.executeScript("arguments[0].click();", allSteps);  // confirm add to cart
+                                    List<WebElement> xdialog = driver.findElements(By.cssSelector("div[class='modal-container'] div[class*='modal-dialog'] div[class*='modal-footer'] a[href*='setOrderType']"));  // any dialog there?
+                                    if (xdialog.size()>0){
+                                        System.out.println("Dialog box Client order is shown on screen");
+                                        WebElement change2ClientOrder = xdialog.get(0); // get client button element
+                                        change2ClientOrder.click(); // change 2 client order
+                                        wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div[class='modal-container']")))); // Wait element containing dialog
+                                        change2ClientOrder = wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div[class='modal-container'] div[class*='modal-dialog'] div[class*='modal-footer'] a"))));  // any dialog there?
+                                        change2ClientOrder.click(); // confirm OK
+                                        System.out.println("Changed to Client order and confirmed with OK");
+                                        allSteps = wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div[class='input-add-to-cart ng-binding']")))); // Wait for element input-add-to-cart ng-binding
+                                        js.executeScript("arguments[0].click();", allSteps);  // confirm add to cart
+                                    }
+
+                                    allSteps = wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div[class='input-add-to-cart ng-binding disabled']")))); // Wait element is disabled
+                                    System.out.println("Earpieces added into cart");
+
                                 }
-
-                                allSteps = wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div[class='input-add-to-cart ng-binding disabled']")))); // Wait element is disabled
-                                System.out.println("Earpieces added into cart");
-
                             }else if (href.contains("parts")) { // check to process category Parts and Fitting
                                 wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div.parts-categories")))); // Wait for the title element to reappear
                                 WebElement pfgrid = driver.findElement(By.cssSelector("div.parts-categories")); // get the grid
@@ -867,7 +975,7 @@ public class pEnterB2bShop {
                                     WebElement pfcat = pftiles.get(p); // actual item
                                     WebElement tilediv = pfcat.findElement(By.cssSelector("div")); // get the 1st element from the list
                                     String tileclass = tilediv.getAttribute("class"); // get class name
-                                    if (tileclass.contains("card")){
+                                    if (tileclass.contains("card") && partsToBeChecked.contains("1")){
                                         WebElement pfitem = pfcat.findElement(By.cssSelector("div.face-front.js-show-parts")); //tile image
                                         js.executeScript("arguments[0].click();", pfitem);  // click with js cmd
                                         WebElement dd_selectfamily = pfcat.findElement(By.cssSelector("div[id='dk1-combobox']")); // drop down element
@@ -910,38 +1018,41 @@ public class pEnterB2bShop {
                                         driver.navigate().back(); // return back one page to parts & fitting main page to process the next tile
                                         wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div.parts-categories")))); // Wait for the title element to reappear
                                     } else if (tileclass.contains("product")){ // it's a product
-                                        WebElement shopitem = tilediv.findElement(By.cssSelector("p > a")); // get the shop link
-                                        js.executeScript("arguments[0].click();", shopitem);  // click with js cmd on shop link
-                                        WebElement maincontainer = wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("main.container")))); // Wait for the container element
-                                        WebElement mc_div = maincontainer.findElement(By.cssSelector("div")); //get the first div
-                                        String firstdivclass = mc_div.getAttribute("class"); // get the value of class=
-                                        if (firstdivclass.contains("simple-product-page")){
-                                            WebElement add2cart = driver.findElement(By.cssSelector("button[class='button js-add-to-cart']")); // get the add to cart element
-                                            js.executeScript("arguments[0].click();", add2cart);  // click with js cmd on shop link
-                                        } else if (firstdivclass.contains("sub-categories")){  // list of product are shown on the actual sub-page
-                                            products = driver.findElement(By.cssSelector("ul.product-list")); // container of products
-                                            list = products.findElements(By.tagName("li")); // products tag
-                                            System.out.println("Total Products displayed on screen: " + list.size()); // console output founded products
-                                            products = list.get(0); // get 1st elelement
-                                            WebElement thename = products.findElement(By.cssSelector("h3[class='name']")); // element containing name of the product
-                                            String pname = thename.getText(); // get the name of the product
-                                            WebElement pronr = products.findElement(By.cssSelector("h4")); // SAP product number
-                                            String pnbr = pronr.getText(); // get the product number of the product
-                                            p2cart = products.findElement(By.cssSelector("a.js-add-to-cart")); // get add to cart element for js click
-                                            js.executeScript("arguments[0].click();", p2cart); // add item to cart
-                                            System.out.println("This spare part product has been added to cart: "+pname+" "+pnbr); // console output
-                                        } else {
-                                            System.out.println("UNKNOWN sub-page! Parts & Fitting sub-page is different."); // console output
+                                        if (partsToBeChecked.contains(""+(p+1)+"")) { // flagged as required to be checked (start at 1 iso 0, so plus 1)
+
+                                            WebElement shopitem = tilediv.findElement(By.cssSelector("p > a")); // get the shop link
+                                            js.executeScript("arguments[0].click();", shopitem);  // click with js cmd on shop link
+                                            WebElement maincontainer = wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("main.container")))); // Wait for the container element
+                                            WebElement mc_div = maincontainer.findElement(By.cssSelector("div")); //get the first div
+                                            String firstdivclass = mc_div.getAttribute("class"); // get the value of class=
+                                            if (firstdivclass.contains("simple-product-page")){
+                                                WebElement add2cart = driver.findElement(By.cssSelector("button[class='button js-add-to-cart']")); // get the add to cart element
+                                                js.executeScript("arguments[0].click();", add2cart);  // click with js cmd on shop link
+                                            } else if (firstdivclass.contains("sub-categories")){  // list of product are shown on the actual sub-page
+                                                products = driver.findElement(By.cssSelector("ul.product-list")); // container of products
+                                                list = products.findElements(By.tagName("li")); // products tag
+                                                System.out.println("Total Products displayed on screen: " + list.size()); // console output founded products
+                                                products = list.get(0); // get 1st elelement
+                                                WebElement thename = products.findElement(By.cssSelector("h3[class='name']")); // element containing name of the product
+                                                String pname = thename.getText(); // get the name of the product
+                                                WebElement pronr = products.findElement(By.cssSelector("h4")); // SAP product number
+                                                String pnbr = pronr.getText(); // get the product number of the product
+                                                p2cart = products.findElement(By.cssSelector("a.js-add-to-cart")); // get add to cart element for js click
+                                                js.executeScript("arguments[0].click();", p2cart); // add item to cart
+                                                System.out.println("This spare part product has been added to cart: "+pname+" "+pnbr); // console output
+                                            } else {
+                                                System.out.println("UNKNOWN sub-page! Parts & Fitting sub-page is different."); // console output
+                                            }
+                                            List<WebElement> addOKdialog = driver.findElements(By.cssSelector("div.notification.notification-cart"));  // add to card confirmation text element
+                                            if (addOKdialog.size()>0){  // confirmation text found
+                                                WebElement addOKdialogElement = addOKdialog.get(0); // item element containing text
+                                                WebElement addOKdialogP = addOKdialogElement.findElement(By.tagName("p")); // paragraph element
+                                                String addOKdialogText = addOKdialogP.getText(); // pull the text to var to output on console
+                                                System.out.println("Add to Cart Confirm Text : "+addOKdialogText); // console output
+                                            }
+                                            driver.navigate().back(); // return back one page to parts & fitting main page to process the next tile
+                                            wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div.parts-categories")))); // Wait for the title element to reappear
                                         }
-                                        List<WebElement> addOKdialog = driver.findElements(By.cssSelector("div.notification.notification-cart"));  // add to card confirmation text element
-                                        if (addOKdialog.size()>0){  // confirmation text found
-                                            WebElement addOKdialogElement = addOKdialog.get(0); // item element containing text
-                                            WebElement addOKdialogP = addOKdialogElement.findElement(By.tagName("p")); // paragraph element
-                                            String addOKdialogText = addOKdialogP.getText(); // pull the text to var to output on console
-                                            System.out.println("Add to Cart Confirm Text : "+addOKdialogText); // console output
-                                        }
-                                        driver.navigate().back(); // return back one page to parts & fitting main page to process the next tile
-                                        wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div.parts-categories")))); // Wait for the title element to reappear
 
                                     } else { // no card nor product type, check it out what it is
                                         System.out.println("UNKNOWN! Type of tile in Parts & Fitting not known by coding."); // console output
@@ -957,7 +1068,7 @@ public class pEnterB2bShop {
                                     WebElement bmcat = cleaningtiles.get(p); // actual item
                                     WebElement tilediv = bmcat.findElement(By.cssSelector("div")); // get the 1st element from the list
                                     String tileclass = tilediv.getAttribute("class"); // get class name
-                                    if (tileclass.contains("card")){
+                                    if (tileclass.contains("card") && batteriesMaintenanceToBeChecked.contains(""+(p+1)+"")){
                                         WebElement shopitem = tilediv.findElement(By.cssSelector("p > a")); // get the shop link
                                         js.executeScript("arguments[0].click();", shopitem);  // click with js cmd on shop link
                                         maincontainer = wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("main.container")))); // Wait for the container element
@@ -983,8 +1094,9 @@ public class pEnterB2bShop {
                                                 System.out.println("Add to Cart Confirm Text : "+addOKdialogText); // console output
                                             }
                                         }
+                                        driver.navigate().back(); // return back one page to parts & fitting main page to process the next tile
                                     }
-                                    driver.navigate().back(); // return back one page to parts & fitting main page to process the next tile
+
                                     wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div.cleaning-categories")))); // Wait for the title element to reloaded
                                     cleaningtiles = driver.findElements(By.cssSelector("div.cleaning-categories > ul > li")); // count sub-categories tiles within grid
                                 }
@@ -992,7 +1104,7 @@ public class pEnterB2bShop {
                             }else if (href.contains("in-office")) { // check to process category In-Office Materials
                                 WebElement maincontainer = wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("main.container")))); // Wait for the container element
                                 List<WebElement> iotiles = maincontainer.findElements(By.cssSelector("div.image-array-tile")); // count sub-categories tiles within grid
-                                // TEST
+                                // get and save data into array
                                 int io =iotiles.size(); // for array
                                 String[][] iocatlinks = new String[io][2]; // define so much lines as the size and each line has two spaces to store the values
                                 for (int i = 0; i < iotiles.size(); i++) { // loop through each category
@@ -1005,28 +1117,30 @@ public class pEnterB2bShop {
                                     System.out.println(i+1 +" "+iocatlinks[i][1]+" = "+iocatlinks[i][0]); // console out
                                 }
                                 //System.out.println("Found "+iotiles.size()+" In-Office Materials sub-categories" +" match array length = " +iocatlinks.length);
-                                /// END TEST
+
                                 for (int i = 0; i < iocatlinks.length; i++) { // loop through each category and add its first product to cart
-                                    driver.get(iocatlinks[i][0]);  // go to the stored url
-                                    maincontainer = wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("main.container")))); // Wait for the container element
-                                    products = maincontainer.findElement(By.cssSelector("ul.product-list")); //get the first product
-                                    //products = driver.findElement(By.cssSelector("ul.product-list")); // container of products
-                                    list = products.findElements(By.tagName("li")); // products tag
-                                    System.out.println("Total "+iocatlinks[i][1]+ " displayed on screen: " + list.size()); // console output founded products
-                                    products = list.get(0); // get 1st elelement
-                                    WebElement thename = products.findElement(By.cssSelector("h3[class='name']")); // element containing name of the product
-                                    String pname = thename.getText(); // get the name of the product
-                                    WebElement pronr = products.findElement(By.cssSelector("h4")); // SAP product number
-                                    String pnbr = pronr.getText(); // get the product number of the product
-                                    p2cart = products.findElement(By.cssSelector("a.js-add-to-cart")); // get add to cart element for js click
-                                    js.executeScript("arguments[0].click();", p2cart); // add item to cart
-                                    System.out.println("This product has been added to cart: " + pname + " " + pnbr); // console output
-                                    List<WebElement> addOKdialog = driver.findElements(By.cssSelector("div.notification.notification-cart"));  // add to card confirmation text element
-                                    if (addOKdialog.size()>0){  // confirmation text found
-                                        WebElement addOKdialogElement = addOKdialog.get(0); // item element containing text
-                                        WebElement addOKdialogP = addOKdialogElement.findElement(By.tagName("p")); // paragraph element
-                                        String addOKdialogText = addOKdialogP.getText(); // pull the text to var to output on console
-                                        System.out.println("Add to Cart Confirm Text : "+addOKdialogText); // console output
+                                    if (batteriesMaintenanceToBeChecked.contains(""+(i+1)+"")) {  // test flag set
+                                        driver.get(iocatlinks[i][0]);  // go to the stored url
+                                        maincontainer = wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("main.container")))); // Wait for the container element
+                                        products = maincontainer.findElement(By.cssSelector("ul.product-list")); //get the first product
+                                        //products = driver.findElement(By.cssSelector("ul.product-list")); // container of products
+                                        list = products.findElements(By.tagName("li")); // products tag
+                                        System.out.println("Total " + iocatlinks[i][1] + " displayed on screen: " + list.size()); // console output founded products
+                                        products = list.get(0); // get 1st element
+                                        WebElement thename = products.findElement(By.cssSelector("h3[class='name']")); // element containing name of the product
+                                        String pname = thename.getText(); // get the name of the product
+                                        WebElement pronr = products.findElement(By.cssSelector("h4")); // SAP product number
+                                        String pnbr = pronr.getText(); // get the product number of the product
+                                        p2cart = products.findElement(By.cssSelector("a.js-add-to-cart")); // get add to cart element for js click
+                                        js.executeScript("arguments[0].click();", p2cart); // add item to cart
+                                        System.out.println("This product has been added to cart: " + pname + " " + pnbr); // console output
+                                        List<WebElement> addOKdialog = driver.findElements(By.cssSelector("div.notification.notification-cart"));  // add to card confirmation text element
+                                        if (addOKdialog.size() > 0) {  // confirmation text found
+                                            WebElement addOKdialogElement = addOKdialog.get(0); // item element containing text
+                                            WebElement addOKdialogP = addOKdialogElement.findElement(By.tagName("p")); // paragraph element
+                                            String addOKdialogText = addOKdialogP.getText(); // pull the text to var to output on console
+                                            System.out.println("Add to Cart Confirm Text : " + addOKdialogText); // console output
+                                        }
                                     }
                                 }
                             }
@@ -1109,8 +1223,8 @@ public class pEnterB2bShop {
         WebElement sCart = driver.findElement(By.cssSelector("a[class='shopping-cart']")); // get the cart
         WebElement iCart = sCart.findElement(By.cssSelector("span[id='items-in-cart']")); // get the items in the cart
         String cItems = iCart.getText();
-        if (!cItems.contains("0")){
-            System.out.println("Have items in cart! Try to SEND ORDER now...");
+        if (!cItems.contains("(0)")){  //amount of item in cart is not zero
+            System.out.println("Have "+cItems+" item(s) in cart! Try to SEND ORDER now...");
             sCart.click();
             WebElement checkout = wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("p.button.button-large.checkout")))); // Wait for button appearance
             // check stock of client option selection
@@ -1163,6 +1277,7 @@ public class pEnterB2bShop {
                 }
             }
             js.executeScript("arguments[0].click()", checkout); // click on proceed to checkout
+            System.out.println("Clicked on Proceed to Checkout");
             WebElement submitorder = wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("p[id='submitButton']")))); // Wait for button appearance
             //Final page b4 send order
 
@@ -1179,10 +1294,13 @@ public class pEnterB2bShop {
                     wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("table.ui-datepicker-calendar")))); // calendar table appearing
                     WebElement selectdeliverydate = driver.findElement(By.cssSelector("a.ui-state-default.ui-state-highlight")); // today's date on calendar
                     js.executeScript("arguments[0].click()", selectdeliverydate); // click the date to fill out the dd fld
+                    WebElement textAreaAC = driver.findElement(By.cssSelector("div.cart-summary.additional-comments > textarea"));
+                    textAreaAC.sendKeys("Additional Comment Text for Special Instructions bla bla...\t");  // Add text with tab char to trigger event handling
                 }
                 js.executeScript("arguments[0].click()", submitorder); // send the order to sap
+                System.out.println("Clicked on Send Order and wait for confirmation page to appear");
                 wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("section.checkout.checkout-thank-you")))); // Wait for order sent confirmation
-                System.out.println("Order SENT!");
+                System.out.println("All is fine, Order SENT!");
             }else {  // No send order in production syste
                 System.out.println("You are on this platform "+enviroment+" NO Order has been sent!");
             }
@@ -1284,7 +1402,7 @@ public class pEnterB2bShop {
         WebElement iCart = sCart.findElement(By.cssSelector("span[id='items-in-cart']")); // get the items in the cart
         String cItems = iCart.getText();
         if (!cItems.contains("0")){
-            System.out.println("Have items in cart! Clear it now...");
+            System.out.println("Have "+cItems+" item(s) in cart! Clear it now...");
             sCart.click();
             wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("p.button.button-large.checkout")))); // Wait for button appearance
             WebElement emptyCart = driver.findElement(By.id("empty-cart"));

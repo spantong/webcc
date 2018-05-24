@@ -119,7 +119,7 @@ public class pEnterShop {
             WebElement right_menubar = driver.findElement(By.cssSelector("div[class='right']"));
 
             List<WebElement> myaccount_links = right_menubar.findElements(By.tagName("a")); // get all avail links
-            System.out.println(myaccount_links);
+            System.out.println("Total menus : "+myaccount_links.size());
             WebElement item;
             String href;
             String urlitem;
@@ -137,16 +137,20 @@ public class pEnterShop {
                             long startTime = System.nanoTime();
                             driver.get(anchor);  // change to that page (clicking somehow not working here)
                             if (anchor.contains("order-history")) { // just for debugging
-                                WebElement testa = driver.findElement(By.cssSelector("div[class='history-list waiting']"));
-                                System.out.println("Spinner content: "+testa.getAttribute("onerHTML"));
-                                wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("div[class='history-list waiting']")));
-                                long difference = System.nanoTime() - startTime;
-                                System.out.println("Total OH execution time: " +
-                                        String.format("%d min, %d sec",
-                                                TimeUnit.NANOSECONDS.toHours(difference),
-                                                TimeUnit.NANOSECONDS.toSeconds(difference) -
-                                                        TimeUnit.MINUTES.toSeconds(TimeUnit.NANOSECONDS.toMinutes(difference))));
-                                //startTime = System.nanoTime(); // reset
+                                List<WebElement> testa = driver.findElements(By.cssSelector("div[class='history-list waiting']"));
+                                if (testa.size()>0){
+                                    WebElement testaElement = testa.get(0);;
+                                    System.out.println("Spinner content: "+testaElement.getAttribute("onerHTML"));
+                                    wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("div[class='history-list waiting']")));
+                                    long difference = System.nanoTime() - startTime;
+                                    System.out.println("Total OH execution time: " +
+                                            String.format("%d min, %d sec",
+                                                    TimeUnit.NANOSECONDS.toHours(difference),
+                                                    TimeUnit.NANOSECONDS.toSeconds(difference) -
+                                                            TimeUnit.MINUTES.toSeconds(TimeUnit.NANOSECONDS.toMinutes(difference))));
+                                    //startTime = System.nanoTime(); // reset
+
+                                }
                             }
                             if (anchor.contains("salesforce")) { // Lyric/Alps/Salesforce processing
                                 wait.until(ExpectedConditions.urlContains("salesforce"));
