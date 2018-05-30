@@ -19,7 +19,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.Thread.*;
-import static javafx.event.Event.fireEvent;
+//import static javafx.event.Event.fireEvent;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.format;
