@@ -51,12 +51,12 @@ public class qMyPhonak {
     @BeforeClass
     public static void setUp() throws Exception {
         //Change browser if required here
-        driver = new ChromeDriver();
         //driver = new ChromeDriver();
+        driver = new FirefoxDriver();
         //driver = new HtmlUnitDriver();
         //baseUrl = "https://my.phonak.com/fr/fr";  // france
-        //baseUrl = "https://my.phonak.com/us/en"; // USA
-        baseUrl = "https://my.phonak.com/de/de"; // Germany
+        baseUrl = "https://my.phonak.com/us/en"; // USA
+        //baseUrl = "https://my.phonak.com/de/de"; // Germany
         //baseUrl = "https://www.phonakpro.com/";
     }
     @Test
@@ -79,8 +79,8 @@ public class qMyPhonak {
             String a11 = driver.getCurrentUrl();
             uname = driver.findElement(By.name("pf.username"));
             //String u1 = "biresex@send22u.info"; // FRA phonak
-            //String u1 = "biresex@mail4-us.org"; // USA phonak
-            String u1 = "biresex@carbtc.net"; // GER phonak
+            String u1 = "biresex@mail4-us.org"; // USA phonak
+            //String u1 = "biresex@carbtc.net"; // GER phonak
             JavascriptExecutor js = (JavascriptExecutor) driver;
             js.executeScript("arguments[0].setAttribute('value', '"+u1+"')", uname);
             //uname.sendKeys("sarotsun.pantong@sonova.com"); // not working in FF
@@ -115,7 +115,7 @@ public class qMyPhonak {
                 //System.out.println("No Popup Window appeared.");
             }
 /*
-* The proble should login, and check all pages of the site
+* The probe should login, and check all pages of the site
 -	Private home page – check for existence of specific text
 -	Personal info page – check for existence of specific text
 -	Product page – check products are there
