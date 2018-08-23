@@ -34,7 +34,7 @@ public class pRegistrationPro {
     private static String uname= "sunnyfunny";
     private static String upw = "Testarossa@1";
     private static String upw1 = "sonova123";
-    private WebDriverWait wait = new WebDriverWait(driver, 30); // set up explicit wait
+    private WebDriverWait wait = new WebDriverWait(driver, 10); // set up explicit wait
 /*
     @FindBy(name="pf.username")
     private WebElement userName;
@@ -294,7 +294,7 @@ public class pRegistrationPro {
         js.executeScript("arguments[0].click();", loginButton); // click on item with javascript code
         wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//button[contains(@type,'submit')]"))); // disappearance login button
         System.out.println("Driver 1. Enter credentials and clicked on login button");  // output on console line
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[contains(text(),'User')]")));
+        //wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[contains(text(),'User')]")));
         driver.findElement(By.xpath("//*[contains(text(),'User')]")).click(); // expand user tree
         driver.findElement(By.xpath("//*[contains(text(),'Customer')]")).click(); // click on Customer
         WebElement searchField = driver.findElement(By.cssSelector("input.z-bandbox-input.z-bandbox-rightedge")); // clear input field

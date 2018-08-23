@@ -9,7 +9,9 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -45,6 +47,8 @@ public class pIcMonitoring {
         //Change browser if required here
         driver = new ChromeDriver();
         //driver = new FirefoxDriver();
+        //driver = new InternetExplorerDriver();
+        //driver = new EdgeDriver();
         baseUrl = "https://www.phonakpro.com/us/en/home.html";
     }
     @Test
@@ -206,15 +210,15 @@ public class pIcMonitoring {
             System.out.println("Points and Balance has line 'Starting Balance'. Finishing test now..."); // output where you are
 
             // check logout link and do logout
-            WebElement logout = wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("a[href*='/logout.html']")))); // wait for link appearance
+            WebElement logout = wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("a[href*='system/sling/logout']")))); // wait for link appearance
             anchor = logout.getAttribute("href");
             driver.get(anchor);  // goto login page
             // login should appear on screen again after logout
             wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("a[href='/bin/phonakpro/login']")))); // wait for logout completion
             //List<WebElement> loginBtn = driver.findElements(By.cssSelector("a[href='/bin/phonakpro/login']"));
-
-            aaa = driver.getCurrentUrl();
-            System.out.println("Logged out from Inner Circle, Landingpage: "+aaa);  // output on console line
+            System.out.println("Logged out from Inner Circle, Landingpage: "+driver.getCurrentUrl());  // output on console line
+            //aaa = driver.getCurrentUrl();
+            //System.out.println("Logged out from Inner Circle, Landingpage: "+aaa);  // output on console line
         }
         catch (Exception e) {
             System.out.println("TEST Failed due to an Exception! Pls check");

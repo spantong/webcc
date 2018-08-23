@@ -42,7 +42,7 @@ public class pEnterB2bShop {
     private static String nStep, inputsn;
     private static String shop_anchor, c_param, anchor;
     private static WebElement store;
-    private static String tobechecked = "...4567890"; //
+    private static String tobechecked = "1234567890"; //
     /*
     1=advanced mode BTE
     2= " Wireless Accessories
@@ -50,9 +50,9 @@ public class pEnterB2bShop {
     4=
     .
     */
-    private static String partsToBeChecked = ".23..."; // Subcategories indicators
-    private static String batteriesMaintenanceToBeChecked = "...."; //
-    private static String inOficceMaterialToBeChecked = "...."; //
+    private static String partsToBeChecked = "123..."; // Subcategories indicators
+    private static String batteriesMaintenanceToBeChecked = "12.."; // Subcategories indicators
+    private static String inOficceMaterialToBeChecked = "12345"; // Subcategories indicators
 
 
 
@@ -190,7 +190,8 @@ public class pEnterB2bShop {
             if (b_param.contains("www.phonakpro.com")){ // starting point was b2b portal
                 //get the exact link value of my-profile
                 profile = wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("a[href*='/account']"))));
-                anchor = profile.getAttribute("href");
+
+                anchor = anchor + profile.getAttribute("href");
                 //Set var again, bcoz click() IS only possible with exact link value
                 //profile = driver.findElement(By.cssSelector("a[href='"+anchor+"']"));
                 //check/validate bcoz default it's invisible
@@ -202,6 +203,11 @@ public class pEnterB2bShop {
                 }
 
                 // Switch to shop/eservices page
+                String whereRw = driver.getCurrentUrl();
+                if (whereRw.contains("https://shop.phonakpro.com/") && b_param.contains("qs-www.")){
+                    anchor = "https://q-shop.phonakpro.com/";
+                    driver.get(anchor); // goto QS environment due B2B is not set up for Q after P/Q referesh
+                }
                 WebElement logout = wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("a[href*='/saml/logout']")))); // check page loaded and logout menu is there
             }
             // start navigation menu check/processing
@@ -539,6 +545,7 @@ public class pEnterB2bShop {
                                                         driver.navigate().back(); // return back one page
                                                     }
                                                 }
+                                                driver.navigate().back(); // reset to HI page
                                             }
                                             if (imgModeOnOff.contains("mode-off")) { // advanced mode is OFF
                                                 //count sub categories
@@ -556,6 +563,7 @@ public class pEnterB2bShop {
                                             if (i1 == onOff) {
                                                 break;
                                             }
+
                                             wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("a[title='toggle fast track mode']")))); // Wait for element
                                             mode = driver.findElement(By.cssSelector("a[title='toggle fast track mode']")); // reset the advanced mode switch
                                             js.executeScript("arguments[0].click();", mode); // change advanced mode ON/OFF
@@ -935,7 +943,7 @@ public class pEnterB2bShop {
                                 jssp.executeScript(jscode, siTextArea); // run javascript command with fld as param
                                 System.out.println("Special instructions text added: " +textValue);
                                 allSteps = wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div[class='input-add-to-cart ng-binding']")))); // Wait for element input-add-to-cart ng-binding
-                                if (!driver.getCurrentUrl().contains("q-shop.phonakpro.com")){  // skip earpieces add to cart due SAP calculation error if access cart in shop
+                                //if (!driver.getCurrentUrl().contains("q-shop.phonakpro.com")){  // skip earpieces add to cart due SAP calculation error if access cart in shop
 
                                     // add to card using javascript
                                     js.executeScript("arguments[0].click();", allSteps);
@@ -962,9 +970,9 @@ public class pEnterB2bShop {
                                     }
 
                                     allSteps = wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div[class='input-add-to-cart ng-binding disabled']")))); // Wait element is disabled
-                                    System.out.println("Earpieces added into cart");
+                                    System.out.println("*** Earpieces added into cart");
 
-                                }
+                                //}
                             }else if (href.contains("parts")) { // check to process category Parts and Fitting
                                 wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("div.parts-categories")))); // Wait for the title element to reappear
                                 WebElement pfgrid = driver.findElement(By.cssSelector("div.parts-categories")); // get the grid
@@ -1299,8 +1307,10 @@ public class pEnterB2bShop {
                 }
                 js.executeScript("arguments[0].click()", submitorder); // send the order to sap
                 System.out.println("Clicked on Send Order and wait for confirmation page to appear");
-                wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("section.checkout.checkout-thank-you")))); // Wait for order sent confirmation
+                WebElement confirm = wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("section.checkout.checkout-thank-you")))); // Wait for order sent confirmation
+                WebElement orderNbr = confirm.findElement(By.cssSelector("div.thank-you-message p")); // text containing order number
                 System.out.println("All is fine, Order SENT!");
+                System.out.println(orderNbr.getText()); // Print the text to console
             }else {  // No send order in production syste
                 System.out.println("You are on this platform "+enviroment+" NO Order has been sent!");
             }
@@ -1401,7 +1411,15 @@ public class pEnterB2bShop {
         WebElement sCart = driver.findElement(By.cssSelector("a[class='shopping-cart']")); // get the cart
         WebElement iCart = sCart.findElement(By.cssSelector("span[id='items-in-cart']")); // get the items in the cart
         String cItems = iCart.getText();
-        if (!cItems.contains("0")){
+
+        int nbrLength = cItems.length()-2;
+        char[] Str2 = new char[nbrLength];
+        int end = cItems.length()-1;
+        cItems.getChars(1, end, Str2, 0);
+        int cItemsAmount = Integer.parseInt(new String(Str2)); // conver to integer value
+
+        if (cItemsAmount > 0) // we have item(s) in cart to clear
+        {
             System.out.println("Have "+cItems+" item(s) in cart! Clear it now...");
             sCart.click();
             wait.until((ExpectedConditions.presenceOfElementLocated(By.cssSelector("p.button.button-large.checkout")))); // Wait for button appearance
